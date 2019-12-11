@@ -11,40 +11,40 @@ typedef void (*sbev_event_cb)(vgc_fiber fiber, void *cb_data, void *ev_data,
                               uint64_t handle);
 
 typedef struct {
-	sbev_event_cb cb;
-	void *cb_data;
+  sbev_event_cb cb;
+  void *cb_data;
 } sbev_cb_and_data;
 
 typedef struct {
-	uv_rwlock_t lock;
-	sds nomen;
-	uint64_t handle;
-	sbev_cb_and_data *cbs;
-	uint64_t max;
-	uint64_t cur;
-	UT_hash_handle hh;
+  uv_rwlock_t lock;
+  sds nomen;
+  uint64_t handle;
+  sbev_cb_and_data *cbs;
+  uint64_t max;
+  uint64_t cur;
+  UT_hash_handle hh;
 
-	// Support for removing callbacks
-	size_t free_max;
-	size_t free_cur;
-	uint64_t *free_handles;
+  // Support for removing callbacks
+  size_t free_max;
+  size_t free_cur;
+  uint64_t *free_handles;
 } sbev_event_entry;
 
 typedef struct {
-	vgc_fiber fiber;
-	uv_rwlock_t lock;
-	// Event hashmap and lookup array
-	sbev_event_entry *entries_map;
-	sbev_event_entry *entries;
-	// Array max and current size
-	uint64_t max;
-	uint64_t cur;
-	// Event handles
-	uint64_t start;
-	uint64_t tick;
-	uint64_t kill;
-	// Misc
-	int kill_flag;
+  vgc_fiber fiber;
+  uv_rwlock_t lock;
+  // Event hashmap and lookup array
+  sbev_event_entry *entries_map;
+  sbev_event_entry *entries;
+  // Array max and current size
+  uint64_t max;
+  uint64_t cur;
+  // Event handles
+  uint64_t start;
+  uint64_t tick;
+  uint64_t kill;
+  // Misc
+  int kill_flag;
 } sbev_eventcore;
 
 void sbev_init_event(sbev_eventcore *ev, vgc_fiber fiber);

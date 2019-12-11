@@ -90,8 +90,8 @@ vgc_make PROC FRAME
   mov rax, rcx                ; Grab the bottom of the context stack
   sub rax, 0160h              ; Reserve space on the context stack
 
-	stmxcsr [rax + 0a0h]        ; Save MMX control/status word
-	fnstcw [rax + 0a4h]         ; Save x87 control word
+  stmxcsr [rax + 0a0h]        ; Save MMX control/status word
+  fnstcw [rax + 0a4h]         ; Save x87 control word
 
   mov [rax + 0100h], r8       ; Save proc address at RBX
 
@@ -126,13 +126,13 @@ vgc_make PROC FRAME
 
 ; Fix the stack before jumping into the passed vgc_proc
 trampoline:
-	push rbp                    ; Set finish as return addr
-	jmp rbx                     ; Jump to the context function
+  push rbp                    ; Set finish as return addr
+  jmp rbx                     ; Jump to the context function
 
 ; Kill the process if a context returns from the bottom stack frame
 finish:
-	xor rcx, rcx                ; Exit code is zero
-	call _exit
+  xor rcx, rcx                ; Exit code is zero
+  call _exit
   hlt
 vgc_make ENDP
 

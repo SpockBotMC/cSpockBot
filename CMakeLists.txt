@@ -5,8 +5,11 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "")
 project(cspock C)
 
 add_executable(main
-    src/main.c src/log.c src/sds.c src/sb_event.c src/sb_net.c
-    src/fibers/fiber.c src/fibers/queue.c src/fibers/scheduler.c
+    src/main.c src/log.c   src/sds.c              src/sb_event.c
+    src/sb_net.c           src/datautils.c        src/1_14_4_proto.c
+    src/cNBT/buffer.c      src/cNBT/nbt_loading.c src/cNBT/nbt_parsing.c
+    src/cNBT/nbt_treeops.c src/cNBT/nbt_util.c    src/fibers/fiber.c
+    src/fibers/queue.c src/fibers/scheduler.c
 )
 target_compile_features(main PRIVATE c_std_11)
 target_compile_options(main PRIVATE $<$<COMPILE_LANGUAGE:C>:-Wall>)
@@ -25,5 +28,5 @@ else()
     target_sources(main PRIVATE src/fibers/asm/x86_64_sysv_elf_nasm.asm)
 endif()
 
-target_link_libraries(main uv)
+target_link_libraries(main uv z)
 target_include_directories(main PRIVATE "include")
