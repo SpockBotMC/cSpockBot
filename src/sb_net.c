@@ -27,4 +27,5 @@ int sbnet_net_init(sbnet_netcore *net, sbev_eventcore *ev,
 	ERR_RET(ret, uv_loop_init(&net->loop));
 	ERR_RET(ret, uv_tcp_init(&net->loop, &net->tcp));
 	sbev_reg_event_cb(ev, "start", sbnet_start_cb, net);
+	return 0;
 }
