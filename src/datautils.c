@@ -670,12 +670,12 @@ int walk_smelting(char *source, size_t max_len) {
   int size = ret;
   source += ret;
   max_len -= ret;
-  if(ret = walk_ingredient(source, max_len) < 0)
+  if((ret = walk_ingredient(source, max_len)) < 0)
     return ret;
   size += ret;
   source += ret;
   max_len -= ret;
-  if(ret = walk_slot(source, max_len) < 0)
+  if((ret = walk_slot(source, max_len)) < 0)
     return ret;
   size += ret;
   source += ret;
@@ -685,7 +685,7 @@ int walk_smelting(char *source, size_t max_len) {
   size += ret;
   source += ssizeof(mc_smelting, experience);
   max_len -= ssizeof(mc_smelting, experience);
-  if(ret = walk_varint(source, max_len) < 0)
+  if((ret = walk_varint(source, max_len)) < 0)
     return ret;
   return size + ret;
 }
@@ -731,7 +731,7 @@ int walk_particledata(char *source, size_t max_len, particle_type type) {
   switch(type) {
     case particle_block:
     case particle_falling_dust:
-      if(ret = walk_varint(source, max_len) < 0)
+      if((ret = walk_varint(source, max_len)) < 0)
         return ret;
       size += ret;
       break;
@@ -740,9 +740,12 @@ int walk_particledata(char *source, size_t max_len, particle_type type) {
         return -1;
       size += sizeof(float) * 4;
     case particle_item:
-      if(ret = walk_slot(source, max_len) < 0)
+      if((ret = walk_slot(source, max_len)) < 0)
         return ret;
       size += ret;
+    default:
+      // Makes compilers happy
+      break;
   }
   return size;
 }

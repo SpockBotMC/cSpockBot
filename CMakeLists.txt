@@ -14,6 +14,7 @@ add_executable(main
 target_compile_features(main PRIVATE c_std_11)
 target_compile_options(main PRIVATE $<$<COMPILE_LANGUAGE:C>:-Wall>)
 target_compile_options(main PRIVATE $<$<COMPILE_LANGUAGE:C>:-Wpedantic>)
+target_compile_options(main PRIVATE $<$<COMPILE_LANGUAGE:C>:-Wno-pointer-sign>)
 
 if(WIN32)
     enable_language(ASM_MASM)

@@ -3,6 +3,9 @@
 	It should not be edited by hand
 */
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "1_14_4_proto.h"
 
 
@@ -545,6 +548,8 @@ int walk_play_toclient_spawn_entity(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 36) {
 		return -1;
 	}
@@ -597,6 +602,8 @@ int walk_play_toclient_spawn_entity_experience_orb(char * source, size_t max_len
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 26) {
 		return -1;
 	}
@@ -633,6 +640,8 @@ int walk_play_toclient_spawn_entity_weather(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 25) {
 		return -1;
 	}
@@ -761,6 +770,8 @@ int walk_play_toclient_spawn_entity_painting(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 9) {
 		return -1;
 	}
@@ -855,6 +866,8 @@ int walk_play_toclient_animation(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 1) {
 		return -1;
 	}
@@ -1022,7 +1035,7 @@ int walk_play_toclient_advancements(char * source, size_t max_len) {
 			uint32_t flags;
 			size += 4;
 			max_len -= 4;
-			ret = dec_be32(&flags, source);
+			source = dec_be32(&flags, source);
 			uint8_t has_background_texture = (flags>>0)&1;
 			if(has_background_texture) {
 				if((ret = walk_string(source, max_len)) < 0) {
@@ -1365,6 +1378,8 @@ int walk_play_toclient_block_break_animation(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 9) {
 		return -1;
 	}
@@ -1838,7 +1853,7 @@ int walk_play_toclient_declare_commands(char * source, size_t max_len) {
 		uint8_t flags;
 		size += 1;
 		max_len -= 1;
-		ret = dec_byte(&flags, source);
+		source = dec_byte(&flags, source);
 		uint8_t has_custom_suggestions = (flags>>4)&1;
 		uint8_t has_redirect_node = (flags>>3)&1;
 		uint8_t command_node_type = (flags>>0)&3;
@@ -1901,7 +1916,7 @@ int walk_play_toclient_declare_commands(char * source, size_t max_len) {
 					uint8_t flags;
 					size += 1;
 					max_len -= 1;
-					ret = dec_byte(&flags, source);
+					source = dec_byte(&flags, source);
 					uint8_t max_present = (flags>>1)&1;
 					uint8_t min_present = (flags>>0)&1;
 					if(min_present) {
@@ -1930,7 +1945,7 @@ int walk_play_toclient_declare_commands(char * source, size_t max_len) {
 					uint8_t flags;
 					size += 1;
 					max_len -= 1;
-					ret = dec_byte(&flags, source);
+					source = dec_byte(&flags, source);
 					uint8_t max_present = (flags>>1)&1;
 					uint8_t min_present = (flags>>0)&1;
 					if(min_present) {
@@ -1959,7 +1974,7 @@ int walk_play_toclient_declare_commands(char * source, size_t max_len) {
 					uint8_t flags;
 					size += 1;
 					max_len -= 1;
-					ret = dec_byte(&flags, source);
+					source = dec_byte(&flags, source);
 					uint8_t max_present = (flags>>1)&1;
 					uint8_t min_present = (flags>>0)&1;
 					if(min_present) {
@@ -2396,6 +2411,8 @@ int walk_play_toclient_chat(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 1) {
 		return -1;
 	}
@@ -2790,6 +2807,8 @@ int walk_play_toclient_named_sound_effect(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 20) {
 		return -1;
 	}
@@ -2885,6 +2904,20 @@ int walk_play_toclient_explosion(char * source, size_t max_len) {
 	}
 	size += 16;
 	source += 16;
+	max_len -= 16;
+	if(max_len < 4) {
+		return -1;
+	}
+	size += 4;
+	max_len -= 4;
+	int32_t affected_block_offsets_count;
+	source = dec_be32(&affected_block_offsets_count, source);
+	if(max_len < affected_block_offsets_count * 3) {
+		return -1;
+	}
+	size += affected_block_offsets_count * 3;
+	source += affected_block_offsets_count * 3;
+	max_len -= affected_block_offsets_count * 3;
 	if(max_len < 12) {
 		return -1;
 	}
@@ -2992,6 +3025,8 @@ int walk_play_toclient_open_horse_window(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 4) {
 		return -1;
 	}
@@ -3331,6 +3366,8 @@ int walk_play_toclient_login(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 1) {
 		return -1;
 	}
@@ -3709,6 +3746,8 @@ int walk_play_toclient_trade_list(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 2) {
 		return -1;
 	}
@@ -3801,6 +3840,8 @@ int walk_play_toclient_rel_entity_move(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 7) {
 		return -1;
 	}
@@ -3837,6 +3878,8 @@ int walk_play_toclient_entity_move_look(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 9) {
 		return -1;
 	}
@@ -3877,6 +3920,8 @@ int walk_play_toclient_entity_look(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 3) {
 		return -1;
 	}
@@ -4725,6 +4770,8 @@ int walk_play_toclient_remove_entity_effect(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 1) {
 		return -1;
 	}
@@ -5408,6 +5455,8 @@ int walk_play_toclient_entity_velocity(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 6) {
 		return -1;
 	}
@@ -5536,6 +5585,8 @@ int walk_play_toclient_update_health(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 4) {
 		return -1;
 	}
@@ -6351,6 +6402,8 @@ int walk_play_toclient_entity_sound_effect(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 8) {
 		return -1;
 	}
@@ -6490,6 +6543,8 @@ int walk_play_toclient_sound_effect(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 20) {
 		return -1;
 	}
@@ -6611,6 +6666,8 @@ int walk_play_toclient_entity_teleport(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 27) {
 		return -1;
 	}
@@ -6651,6 +6708,8 @@ int walk_play_toclient_entity_head_rotation(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 1) {
 		return -1;
 	}
@@ -6693,6 +6752,8 @@ int walk_play_toclient_entity_effect(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 1) {
 		return -1;
 	}
@@ -7172,6 +7233,8 @@ int walk_play_toclient_acknowledge_player_digging(char * source, size_t max_len)
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 1) {
 		return -1;
 	}
@@ -7232,6 +7295,8 @@ int walk_play_toserver_query_block_nbt(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 8) {
 		return -1;
 	}
@@ -7481,6 +7546,8 @@ int walk_play_toserver_update_command_block(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 1) {
 		return -1;
 	}
@@ -7527,6 +7594,8 @@ int walk_play_toserver_update_command_block_minecart(char * source, size_t max_l
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 1) {
 		return -1;
 	}
@@ -7618,6 +7687,8 @@ int walk_play_toserver_update_structure_block(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 1) {
 		return -1;
 	}
@@ -8319,6 +8390,8 @@ int walk_play_toserver_craft_recipe_request(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 1) {
 		return -1;
 	}
@@ -8821,6 +8894,8 @@ int walk_play_toserver_block_place(char * source, size_t max_len) {
 		return -1;
 	}
 	size += ret;
+	source += ret;
+	max_len -= ret;
 	if(max_len < 13) {
 		return -1;
 	}

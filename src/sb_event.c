@@ -104,7 +104,7 @@ void sbev_unreg_cb(sbev_eventcore *ev, uint64_t ev_handle,
   uv_rwlock_wrlock(&ent->lock);
   if(ent->free_cur == ent->free_max) {
     ent->free_max *= 2;
-    sbev_cb_and_data *p = realloc(ent->free_handles,
+    uint64_t *p = realloc(ent->free_handles,
                                   sizeof(*ent->free_handles) * ent->free_max);
     CHK_ALLOC(p);
     ent->free_handles = p;
