@@ -58,9 +58,8 @@ uint64_t sbev_reg_event(sbev_eventcore *ev, char *nomen) {
     if(ev->entries != p) {
       ev->entries = p;
       HASH_CLEAR(hh, ev->entries_map);
-      for(uint64_t i = 0; i < ev->cur; i++) {
+      for(uint64_t i = 0; i < ev->cur; i++)
         HASH_ADD_KEYPTR(hh, ev->entries_map, p[i].nomen, sdslen(p[i].nomen), &p[i]);
-      }
     }
   }
   uint64_t handle = ev->cur++;
@@ -105,7 +104,7 @@ void sbev_unreg_cb(sbev_eventcore *ev, uint64_t ev_handle,
   if(ent->free_cur == ent->free_max) {
     ent->free_max *= 2;
     uint64_t *p = realloc(ent->free_handles,
-                                  sizeof(*ent->free_handles) * ent->free_max);
+                          sizeof(*ent->free_handles) * ent->free_max);
     CHK_ALLOC(p);
     ent->free_handles = p;
   }
