@@ -37,11 +37,7 @@ static int vgc_counter_add_waiter(vgc_counter *count, vgc_fiber *fiber) {
 	return 0;
 }
 
-static int vgc_enque_job(
-	vgc_scheduler *sched,
-	vgc_job job,
-	vgc_counter *count
-) {
+int vgc_enque_job(vgc_scheduler *sched, vgc_job job, vgc_counter *count) {
 	vgc_fiber *fiber;
 	if(vgc_pop(&sched->free_q_pool, (void **) &fiber))
 		return -1;
@@ -68,11 +64,7 @@ vgc_job vgc_job_init(vgc_proc proc, void *data, fiber_priority priority) {
 	};
 }
 
-int vgc_schedule_job(
-	vgc_fiber fiber,
-	vgc_job job,
-	vgc_counter *count
-) {
+int vgc_schedule_job(vgc_fiber fiber, vgc_job job, vgc_counter *count) {
 	if(count)
 		*count = vgc_counter_init(1);
 	return vgc_enque_job(fiber.fd->sched, job, count);
@@ -130,10 +122,12 @@ vgc_fiber vgc_wait_for_counter2(
 	return vgc_jump(fiber);
 }
 
-void vgc_scheduler_init(vgc_scheduler *sched, size_t size, vgc_job job) {
+void vgc_scheduler_init(vgc_scheduler *sched, size_t size) {
 	*sched = (vgc_scheduler) {0};
-	if ((size < 2) || ((size & (size - 1)) != 0))
+	if ((size < 2) || ((size & (size - 1)) != 0)) {
+		log_error("Scheduler passed size that is not a power of two");
 		return;
+	}
 	uv_mutex_init(&sched->waiter_mux);
 	uv_cond_init(&sched->waiter_cond);
 	size_t alloc_size = size * sizeof(vgc_cell);
@@ -149,7 +143,6 @@ void vgc_scheduler_init(vgc_scheduler *sched, size_t size, vgc_job job) {
 		fiber->fd->id = (int) i;
 		vgc_push(&sched->free_q_pool, fiber);
 	}
-	vgc_enque_job(sched, job, NULL);
 }
 
 // ToDo: Create various versions of this. One for pure lockless/spinning, one

@@ -16,7 +16,8 @@ typedef struct {
 	uv_tcp_t tcp;
 } sbnet_netcore;
 
-void sbnet_start_cb(void *cb_data, void *event_data, uint64_t handle) {
+void sbnet_start_cb(vgc_fiber fiber, void *cb_data, void *event_data,
+                    uint64_t handle) {
 	// Do something
 }
 
