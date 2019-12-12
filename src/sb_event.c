@@ -28,7 +28,7 @@ void sbev_init_event(sbev_eventcore *ev, vgc_fiber fiber) {
   ev->kill = sbev_reg_event(ev, "kill");
 }
 
-void sbev_init_event_entry(sbev_event_entry *ent, char *nomen, uint64_t handle) {
+void sbev_init_event_entry(sbev_event_entry *ent, char const *nomen, uint64_t handle) {
   ERR_CHK(uv_rwlock_init(&ent->lock), "Failed to init rwlock");
   CHK_ALLOC(ent->nomen = sdsnew(nomen));
   ent->handle = handle;
@@ -42,7 +42,7 @@ void sbev_init_event_entry(sbev_event_entry *ent, char *nomen, uint64_t handle) 
   );
 }
 
-uint64_t sbev_reg_event(sbev_eventcore *ev, char *nomen) {
+uint64_t sbev_reg_event(sbev_eventcore *ev, char const *nomen) {
   sbev_event_entry *find;
   uv_rwlock_rdlock(&ev->lock);
   HASH_FIND_STR(ev->entries_map, nomen, find);
@@ -115,7 +115,7 @@ void sbev_unreg_cb(sbev_eventcore *ev, uint64_t ev_handle,
   uv_rwlock_rdunlock(&ev->lock);
 }
 
-void sbev_reg_event_cb(sbev_eventcore *ev, char *nomen, sbev_event_cb cb,
+void sbev_reg_event_cb(sbev_eventcore *ev, char const *nomen, sbev_event_cb cb,
                        void *cb_data) {
   // ToDo: Should we have unsafe versions of these so we don't grab the locks
   // multiple times?

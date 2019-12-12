@@ -48,10 +48,10 @@ typedef struct {
 } sbev_eventcore;
 
 void sbev_init_event(sbev_eventcore *ev, vgc_fiber fiber);
-uint64_t sbev_reg_event(sbev_eventcore *ev, char *nomen);
+uint64_t sbev_reg_event(sbev_eventcore *ev, char const *nomen);
 uint64_t sbev_reg_cb(sbev_eventcore *ev, uint64_t ev_handle, sbev_event_cb cb,
                      void *cb_data);
-void sbev_reg_event_cb(sbev_eventcore *ev, char *nomen, sbev_event_cb cb,
+void sbev_reg_event_cb(sbev_eventcore *ev, char const *nomen, sbev_event_cb cb,
                        void *cb_data);
 
 void sbev_run_event_once(sbev_eventcore *ev);
