@@ -184,9 +184,10 @@ void sbev_run_event_once(sbev_eventcore *ev) {
 
 void sbev_run_event_continous(sbev_eventcore *ev) {
   vgc_counter count;
-  while(!ev->kill_flag)
+  while(!ev->kill_flag) {
     sbev_emit_event(ev, ev->tick, NULL, &count);
     vgc_wait_for_counter(ev->fiber, &count);
+  }
   sbev_emit_event(ev, ev->kill, NULL, &count);
   vgc_wait_for_counter(ev->fiber, &count);
 }

@@ -63,7 +63,6 @@ int sbnet_net_init(sbnet_netcore *net, sbev_eventcore *ev,
   ERR_RET(ret, uv_tcp_init(&net->loop, &net->tcp));
   sbnet_handles_alloc(net->handles);
   sbnet_handles_reg(net->handles, ev);
-
   sbev_reg_event_cb(ev, "start", sbnet_start_cb, net);
   return 0;
 }
