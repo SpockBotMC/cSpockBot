@@ -42,13 +42,8 @@ int vgc_push(vgc_ringbuf *rb, void *data) {
     size_t seq = atomic_load_explicit(&cell->seq, memory_order_acquire);
     intptr_t dif = (intptr_t) seq - (intptr_t) pos;
     if(dif == 0) {
-      if((atomic_compare_exchange_weak_explicit(
-        &rb->tail,
-        &pos,
-        pos + 1,
-        memory_order_relaxed,
-        memory_order_relaxed
-      ))) break;
+      if((atomic_compare_exchange_weak_explicit(&rb->tail, &pos, pos + 1,
+        memory_order_relaxed, memory_order_relaxed))) break;
     } else if(dif < 0) {
       return -1;
     } else {
@@ -68,13 +63,8 @@ int vgc_pop(vgc_ringbuf *rb, void **data) {
     size_t seq = atomic_load_explicit(&cell->seq, memory_order_acquire);
     intptr_t dif = (intptr_t) seq - (intptr_t) (pos + 1);
     if(dif == 0) {
-      if((atomic_compare_exchange_weak_explicit(
-        &rb->head,
-        &pos,
-        pos + 1,
-        memory_order_relaxed,
-        memory_order_relaxed
-      ))) break;
+      if((atomic_compare_exchange_weak_explicit(&rb->head, &pos, pos + 1,
+        memory_order_relaxed, memory_order_relaxed))) break;
     } else if(dif < 0) {
       return -1;
     } else {

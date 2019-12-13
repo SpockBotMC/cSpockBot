@@ -28,7 +28,8 @@ typedef struct {
 
 void sbnet_start_cb(vgc_fiber fiber, void *cb_data, void *event_data,
                     uint64_t handle) {
-  // Do something
+  sbnet_netcore *net = cb_data;
+
 }
 
 static void sbnet_handles_alloc(

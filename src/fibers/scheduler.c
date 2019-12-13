@@ -47,13 +47,22 @@ int vgc_enque_job(vgc_scheduler *sched, vgc_job job, vgc_counter *count) {
   fiber->fd->parent_count = count;
   switch(job.priority) {
     case FIBER_HI:
-      return vgc_enqueue(&sched->hi_q, fiber);
+      if(vgc_enqueue(&sched->hi_q, fiber)) goto err;
     case FIBER_MID:
-      return vgc_enqueue(&sched->mid_q, fiber);
+      if(vgc_enqueue(&sched->mid_q, fiber)) goto err;
     case FIBER_LO:
-      return vgc_enqueue(&sched->lo_q, fiber);
+      if(vgc_enqueue(&sched->lo_q, fiber)) goto err;
+    default:
+      log_error("Invalid priority");
+      goto err;
   }
-  return -1;
+  return 0;
+  err:
+    if(vgc_push(&sched->free_q_pool, (void **) &fiber)) {
+      log_error("Failed to push fiber back to free queue during err");
+      exit(-1);
+    }
+    return -1;
 }
 
 vgc_job vgc_job_init(vgc_proc proc, void *data, fiber_priority priority) {
