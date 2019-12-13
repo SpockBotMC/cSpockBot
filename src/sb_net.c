@@ -3,6 +3,7 @@
 #include "1_14_4_proto.h"
 #include "sds.h"
 #include "sb_event.h"
+#include "sb_net.h"
 #include "logc/log.h"
 #include "assert.h"
 
@@ -25,36 +26,10 @@
                                     <- rem = 2 -->
 */
 
-typedef struct {
-  char *base;
-  char *cur;
-  size_t len;
-  size_t in_use;
-  size_t rem;
-} sbnet_bbuf;
-
-typedef struct {
-  sds addr;
-  int port;
-} sbnet_settings;
-
 enum compression_state {
   uncompressed,
   compressed
 };
-
-typedef struct {
-  sbev_eventcore *ev;
-  sbnet_settings settings;
-  uint64_t *handles[protocol_state_max][protocol_direction_max];
-  int compression;
-  int proto_state;
-  sbnet_bbuf read_buf;
-  ssize_t next_packet_size;
-  uv_loop_t loop;
-  uv_tcp_t tcp;
-  uv_connect_t connect;
-} sbnet_netcore;
 
 int sbnet_recv_bbuf(char *dest, sbnet_bbuf *src, size_t len) {
   if(src->in_use < len)
@@ -95,6 +70,7 @@ uv_buf_t sbnet_buf_init(size_t size) {
 static void sbnet_ontick(vgc_fiber fiber, void *cb_data, void *event_data,
                          uint64_t handle) {
   sbnet_netcore *net = cb_data;
+  net->fiber = fiber;
   uv_run(&net->loop, UV_RUN_ONCE);
 }
 
@@ -102,12 +78,6 @@ static void sbnet_alloc_cb(uv_handle_t *handle, size_t size, uv_buf_t *buf) {
   sbnet_netcore *net = handle->data;
   sbnet_bbuf_make_room(&net->read_buf, size);
   *buf = uv_buf_init(net->read_buf.cur + net->read_buf.in_use, size);
-}
-
-static void sbnet_handle_decode(sbev_eventcore *ev, int proto_state,
-                                int32_t id, char *data, size_t len) {
-
-  //Do something sane here
 }
 
 static void sbnet_read_cb(uv_stream_t *s, ssize_t nread, const uv_buf_t *buf) {
@@ -142,6 +112,8 @@ static void sbnet_read_cb(uv_stream_t *s, ssize_t nread, const uv_buf_t *buf) {
     if(net->next_packet_size > net->read_buf.in_use)
       break;
 
+    // ToDo: Fire this off in a seperate fiber, so we can decode a new packet
+    // while still resolving the old one
     char *data;
     size_t data_len;
     int32_t id;
@@ -160,7 +132,19 @@ static void sbnet_read_cb(uv_stream_t *s, ssize_t nread, const uv_buf_t *buf) {
       log_debug("Compression unimplemented");
       exit(-1);
     }
-    sbnet_handle_decode(net->ev, net->proto_state, id, data, data_len);
+    void *pak = generic_toclient_decode(net->proto_state, id, data, data_len);
+    if(!pak) {
+      log_error("Error decoding packet: %s",
+                 protocol_strings[net->proto_state][toclient_id][id]);
+      exit(-1);
+    }
+
+    log_debug("Decoded: %s",
+              protocol_strings[net->proto_state][toclient_id][id]);
+    vgc_counter count;
+    sbev_emit_event(net->ev, net->handles[net->proto_state][toclient_id][id],
+                    pak, &count);
+    vgc_wait_for_counter(net->fiber, &count);
   }
 }
 
@@ -169,6 +153,8 @@ static void sbnet_write_cb(uv_write_t *write, int status) {
     log_error("Error on write: %s", uv_strerror(status));
     exit(-1);
   }
+  free(write->data);
+  free(write);
 }
 
 static void sbnet_connect_cb(uv_connect_t *connect, int status) {
@@ -177,21 +163,32 @@ static void sbnet_connect_cb(uv_connect_t *connect, int status) {
     exit(-1);
   }
   sbnet_netcore *net = connect->data;
-  handshaking_toserver_set_protocol packet = {
+  handshaking_toserver_set_protocol set_proto = {
     .protocol_version = 498,
     .server_host = sdsnew(net->settings.addr),
     .server_port = 25565,
     .next_state = login_id
   };
-  size_t size = size_handshaking_toserver_set_protocol(packet);
-  uv_buf_t buf = sbnet_buf_init(size);
-  enc_handshaking_toserver_set_protocol(buf.base, packet);
+  login_toserver_login_start login_start = {
+    .username = sdsnew(net->settings.username)
+  };
+
+  // ToDo: This is broken, need to encode packet_id and length
+  size_t s_set_proto = size_handshaking_toserver_set_protocol(set_proto);
+  size_t s_login_start = size_login_toserver_login_start(login_start);
+  uv_buf_t buf = sbnet_buf_init(s_set_proto + s_login_start);
+
+  char *tmp = enc_handshaking_toserver_set_protocol(buf.base, set_proto);
+  enc_login_toserver_login_start(tmp, login_start);
+
   uv_write_t *write = malloc(sizeof(*write));
   CHK_ALLOC(write);
-  write->data = net;
+  write->data = buf.base;
   uv_write(write, connect->handle, &buf, 1, sbnet_write_cb);
   uv_read_start(connect->handle, sbnet_alloc_cb, sbnet_read_cb);
-  free_handshaking_toserver_set_protocol(packet);
+
+  free_handshaking_toserver_set_protocol(set_proto);
+  free_login_toserver_login_start(login_start);
 }
 
 void sbnet_start_cb(vgc_fiber fiber, void *cb_data, void *event_data,

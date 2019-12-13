@@ -48,10 +48,13 @@ int vgc_enque_job(vgc_scheduler *sched, vgc_job job, vgc_counter *count) {
   switch(job.priority) {
     case FIBER_HI:
       if(vgc_enqueue(&sched->hi_q, fiber)) goto err;
+      break;
     case FIBER_MID:
       if(vgc_enqueue(&sched->mid_q, fiber)) goto err;
+      break;
     case FIBER_LO:
       if(vgc_enqueue(&sched->lo_q, fiber)) goto err;
+      break;
     default:
       log_error("Invalid priority");
       goto err;
@@ -147,7 +150,7 @@ void vgc_scheduler_init(vgc_scheduler *sched, size_t size) {
   for(size_t i = 0; i < size; i++) {
     vgc_fiber *fiber = malloc(sizeof(*fiber));
     fiber->fd = malloc(sizeof(*fiber->fd));
-    *fiber = vgc_fiber_init(malloc(1<<17), 1<<17, fiber->fd);
+    *fiber = vgc_fiber_init(malloc(1<<20), 1<<20, fiber->fd);
     fiber->fd->sched = sched;
     fiber->fd->id = (int) i;
     vgc_push(&sched->free_q_pool, fiber);

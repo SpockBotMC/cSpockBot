@@ -12,8 +12,8 @@
 #include "datautils.h"
 
 enum protocol_direction_id {
-  to_client_id,
-  to_server_id,
+  toclient_id,
+  toserver_id,
   protocol_direction_max
 };
 
@@ -25,199 +25,200 @@ enum protocol_state_id {
   protocol_state_max
 };
 
-enum handshaking_to_client_ids {
-  handshaking_to_client_max
+enum handshaking_toclient_ids {
+  handshaking_toclient_max
 };
 
-enum handshaking_to_server_ids {
-  handshaking_to_server_set_protocol_id,
-  handshaking_to_server_legacy_server_list_ping_id,
-  handshaking_to_server_max
+enum handshaking_toserver_ids {
+  handshaking_toserver_set_protocol_id,
+  handshaking_toserver_legacy_server_list_ping_id,
+  handshaking_toserver_max
 };
 
-enum status_to_client_ids {
-  status_to_client_server_info_id,
-  status_to_client_ping_id,
-  status_to_client_max
+enum status_toclient_ids {
+  status_toclient_server_info_id,
+  status_toclient_ping_id,
+  status_toclient_max
 };
 
-enum status_to_server_ids {
-  status_to_server_ping_start_id,
-  status_to_server_ping_id,
-  status_to_server_max
+enum status_toserver_ids {
+  status_toserver_ping_start_id,
+  status_toserver_ping_id,
+  status_toserver_max
 };
 
-enum login_to_client_ids {
-  login_to_client_disconnect_id,
-  login_to_client_encryption_begin_id,
-  login_to_client_success_id,
-  login_to_client_compress_id,
-  login_to_client_login_plugin_request_id,
-  login_to_client_max
+enum login_toclient_ids {
+  login_toclient_disconnect_id,
+  login_toclient_encryption_begin_id,
+  login_toclient_success_id,
+  login_toclient_compress_id,
+  login_toclient_login_plugin_request_id,
+  login_toclient_max
 };
 
-enum login_to_server_ids {
-  login_to_server_login_start_id,
-  login_to_server_encryption_begin_id,
-  login_to_server_login_plugin_response_id,
-  login_to_server_max
+enum login_toserver_ids {
+  login_toserver_login_start_id,
+  login_toserver_encryption_begin_id,
+  login_toserver_login_plugin_response_id,
+  login_toserver_max
 };
 
-enum play_to_client_ids {
-  play_to_client_spawn_entity_id,
-  play_to_client_spawn_entity_experience_orb_id,
-  play_to_client_spawn_entity_weather_id,
-  play_to_client_spawn_entity_living_id,
-  play_to_client_spawn_entity_painting_id,
-  play_to_client_named_entity_spawn_id,
-  play_to_client_animation_id,
-  play_to_client_statistics_id,
-  play_to_client_block_break_animation_id,
-  play_to_client_tile_entity_data_id,
-  play_to_client_block_action_id,
-  play_to_client_block_change_id,
-  play_to_client_boss_bar_id,
-  play_to_client_difficulty_id,
-  play_to_client_chat_id,
-  play_to_client_multi_block_change_id,
-  play_to_client_tab_complete_id,
-  play_to_client_declare_commands_id,
-  play_to_client_transaction_id,
-  play_to_client_close_window_id,
-  play_to_client_window_items_id,
-  play_to_client_craft_progress_bar_id,
-  play_to_client_set_slot_id,
-  play_to_client_set_cooldown_id,
-  play_to_client_custom_payload_id,
-  play_to_client_named_sound_effect_id,
-  play_to_client_kick_disconnect_id,
-  play_to_client_entity_status_id,
-  play_to_client_explosion_id,
-  play_to_client_unload_chunk_id,
-  play_to_client_game_state_change_id,
-  play_to_client_open_horse_window_id,
-  play_to_client_keep_alive_id,
-  play_to_client_map_chunk_id,
-  play_to_client_world_event_id,
-  play_to_client_world_particles_id,
-  play_to_client_update_light_id,
-  play_to_client_login_id,
-  play_to_client_map_id,
-  play_to_client_trade_list_id,
-  play_to_client_rel_entity_move_id,
-  play_to_client_entity_move_look_id,
-  play_to_client_entity_look_id,
-  play_to_client_entity_id,
-  play_to_client_vehicle_move_id,
-  play_to_client_open_book_id,
-  play_to_client_open_window_id,
-  play_to_client_open_sign_entity_id,
-  play_to_client_craft_recipe_response_id,
-  play_to_client_abilities_id,
-  play_to_client_combat_event_id,
-  play_to_client_player_info_id,
-  play_to_client_face_player_id,
-  play_to_client_position_id,
-  play_to_client_unlock_recipes_id,
-  play_to_client_entity_destroy_id,
-  play_to_client_remove_entity_effect_id,
-  play_to_client_resource_pack_send_id,
-  play_to_client_respawn_id,
-  play_to_client_entity_head_rotation_id,
-  play_to_client_select_advancement_tab_id,
-  play_to_client_world_border_id,
-  play_to_client_camera_id,
-  play_to_client_held_item_slot_id,
-  play_to_client_update_view_position_id,
-  play_to_client_update_view_distance_id,
-  play_to_client_scoreboard_display_objective_id,
-  play_to_client_entity_metadata_id,
-  play_to_client_attach_entity_id,
-  play_to_client_entity_velocity_id,
-  play_to_client_entity_equipment_id,
-  play_to_client_experience_id,
-  play_to_client_update_health_id,
-  play_to_client_scoreboard_objective_id,
-  play_to_client_set_passengers_id,
-  play_to_client_teams_id,
-  play_to_client_scoreboard_score_id,
-  play_to_client_spawn_position_id,
-  play_to_client_update_time_id,
-  play_to_client_title_id,
-  play_to_client_entity_sound_effect_id,
-  play_to_client_sound_effect_id,
-  play_to_client_stop_sound_id,
-  play_to_client_playerlist_header_id,
-  play_to_client_nbt_query_response_id,
-  play_to_client_collect_id,
-  play_to_client_entity_teleport_id,
-  play_to_client_advancements_id,
-  play_to_client_entity_update_attributes_id,
-  play_to_client_entity_effect_id,
-  play_to_client_declare_recipes_id,
-  play_to_client_tags_id,
-  play_to_client_acknowledge_player_digging_id,
-  play_to_client_max
+enum play_toclient_ids {
+  play_toclient_spawn_entity_id,
+  play_toclient_spawn_entity_experience_orb_id,
+  play_toclient_spawn_entity_weather_id,
+  play_toclient_spawn_entity_living_id,
+  play_toclient_spawn_entity_painting_id,
+  play_toclient_named_entity_spawn_id,
+  play_toclient_animation_id,
+  play_toclient_statistics_id,
+  play_toclient_block_break_animation_id,
+  play_toclient_tile_entity_data_id,
+  play_toclient_block_action_id,
+  play_toclient_block_change_id,
+  play_toclient_boss_bar_id,
+  play_toclient_difficulty_id,
+  play_toclient_chat_id,
+  play_toclient_multi_block_change_id,
+  play_toclient_tab_complete_id,
+  play_toclient_declare_commands_id,
+  play_toclient_transaction_id,
+  play_toclient_close_window_id,
+  play_toclient_window_items_id,
+  play_toclient_craft_progress_bar_id,
+  play_toclient_set_slot_id,
+  play_toclient_set_cooldown_id,
+  play_toclient_custom_payload_id,
+  play_toclient_named_sound_effect_id,
+  play_toclient_kick_disconnect_id,
+  play_toclient_entity_status_id,
+  play_toclient_explosion_id,
+  play_toclient_unload_chunk_id,
+  play_toclient_game_state_change_id,
+  play_toclient_open_horse_window_id,
+  play_toclient_keep_alive_id,
+  play_toclient_map_chunk_id,
+  play_toclient_world_event_id,
+  play_toclient_world_particles_id,
+  play_toclient_update_light_id,
+  play_toclient_login_id,
+  play_toclient_map_id,
+  play_toclient_trade_list_id,
+  play_toclient_rel_entity_move_id,
+  play_toclient_entity_move_look_id,
+  play_toclient_entity_look_id,
+  play_toclient_entity_id,
+  play_toclient_vehicle_move_id,
+  play_toclient_open_book_id,
+  play_toclient_open_window_id,
+  play_toclient_open_sign_entity_id,
+  play_toclient_craft_recipe_response_id,
+  play_toclient_abilities_id,
+  play_toclient_combat_event_id,
+  play_toclient_player_info_id,
+  play_toclient_face_player_id,
+  play_toclient_position_id,
+  play_toclient_unlock_recipes_id,
+  play_toclient_entity_destroy_id,
+  play_toclient_remove_entity_effect_id,
+  play_toclient_resource_pack_send_id,
+  play_toclient_respawn_id,
+  play_toclient_entity_head_rotation_id,
+  play_toclient_select_advancement_tab_id,
+  play_toclient_world_border_id,
+  play_toclient_camera_id,
+  play_toclient_held_item_slot_id,
+  play_toclient_update_view_position_id,
+  play_toclient_update_view_distance_id,
+  play_toclient_scoreboard_display_objective_id,
+  play_toclient_entity_metadata_id,
+  play_toclient_attach_entity_id,
+  play_toclient_entity_velocity_id,
+  play_toclient_entity_equipment_id,
+  play_toclient_experience_id,
+  play_toclient_update_health_id,
+  play_toclient_scoreboard_objective_id,
+  play_toclient_set_passengers_id,
+  play_toclient_teams_id,
+  play_toclient_scoreboard_score_id,
+  play_toclient_spawn_position_id,
+  play_toclient_update_time_id,
+  play_toclient_title_id,
+  play_toclient_entity_sound_effect_id,
+  play_toclient_sound_effect_id,
+  play_toclient_stop_sound_id,
+  play_toclient_playerlist_header_id,
+  play_toclient_nbt_query_response_id,
+  play_toclient_collect_id,
+  play_toclient_entity_teleport_id,
+  play_toclient_advancements_id,
+  play_toclient_entity_update_attributes_id,
+  play_toclient_entity_effect_id,
+  play_toclient_declare_recipes_id,
+  play_toclient_tags_id,
+  play_toclient_acknowledge_player_digging_id,
+  play_toclient_max
 };
 
-enum play_to_server_ids {
-  play_to_server_teleport_confirm_id,
-  play_to_server_query_block_nbt_id,
-  play_to_server_set_difficulty_id,
-  play_to_server_chat_id,
-  play_to_server_client_command_id,
-  play_to_server_settings_id,
-  play_to_server_tab_complete_id,
-  play_to_server_transaction_id,
-  play_to_server_enchant_item_id,
-  play_to_server_window_click_id,
-  play_to_server_close_window_id,
-  play_to_server_custom_payload_id,
-  play_to_server_edit_book_id,
-  play_to_server_query_entity_nbt_id,
-  play_to_server_use_entity_id,
-  play_to_server_keep_alive_id,
-  play_to_server_lock_difficulty_id,
-  play_to_server_position_id,
-  play_to_server_position_look_id,
-  play_to_server_look_id,
-  play_to_server_flying_id,
-  play_to_server_vehicle_move_id,
-  play_to_server_steer_boat_id,
-  play_to_server_pick_item_id,
-  play_to_server_craft_recipe_request_id,
-  play_to_server_abilities_id,
-  play_to_server_block_dig_id,
-  play_to_server_entity_action_id,
-  play_to_server_steer_vehicle_id,
-  play_to_server_crafting_book_data_id,
-  play_to_server_name_item_id,
-  play_to_server_resource_pack_receive_id,
-  play_to_server_advancement_tab_id,
-  play_to_server_select_trade_id,
-  play_to_server_set_beacon_effect_id,
-  play_to_server_held_item_slot_id,
-  play_to_server_update_command_block_id,
-  play_to_server_update_command_block_minecart_id,
-  play_to_server_set_creative_slot_id,
-  play_to_server_update_jigsaw_block_id,
-  play_to_server_update_structure_block_id,
-  play_to_server_update_sign_id,
-  play_to_server_arm_animation_id,
-  play_to_server_spectate_id,
-  play_to_server_block_place_id,
-  play_to_server_use_item_id,
-  play_to_server_max
+enum play_toserver_ids {
+  play_toserver_teleport_confirm_id,
+  play_toserver_query_block_nbt_id,
+  play_toserver_set_difficulty_id,
+  play_toserver_chat_id,
+  play_toserver_client_command_id,
+  play_toserver_settings_id,
+  play_toserver_tab_complete_id,
+  play_toserver_transaction_id,
+  play_toserver_enchant_item_id,
+  play_toserver_window_click_id,
+  play_toserver_close_window_id,
+  play_toserver_custom_payload_id,
+  play_toserver_edit_book_id,
+  play_toserver_query_entity_nbt_id,
+  play_toserver_use_entity_id,
+  play_toserver_keep_alive_id,
+  play_toserver_lock_difficulty_id,
+  play_toserver_position_id,
+  play_toserver_position_look_id,
+  play_toserver_look_id,
+  play_toserver_flying_id,
+  play_toserver_vehicle_move_id,
+  play_toserver_steer_boat_id,
+  play_toserver_pick_item_id,
+  play_toserver_craft_recipe_request_id,
+  play_toserver_abilities_id,
+  play_toserver_block_dig_id,
+  play_toserver_entity_action_id,
+  play_toserver_steer_vehicle_id,
+  play_toserver_crafting_book_data_id,
+  play_toserver_name_item_id,
+  play_toserver_resource_pack_receive_id,
+  play_toserver_advancement_tab_id,
+  play_toserver_select_trade_id,
+  play_toserver_set_beacon_effect_id,
+  play_toserver_held_item_slot_id,
+  play_toserver_update_command_block_id,
+  play_toserver_update_command_block_minecart_id,
+  play_toserver_set_creative_slot_id,
+  play_toserver_update_jigsaw_block_id,
+  play_toserver_update_structure_block_id,
+  play_toserver_update_sign_id,
+  play_toserver_arm_animation_id,
+  play_toserver_spectate_id,
+  play_toserver_block_place_id,
+  play_toserver_use_item_id,
+  play_toserver_max
 };
 
-extern const char *handshaking_to_server_strings[];
-extern const char *status_to_client_strings[];
-extern const char *login_to_client_strings[];
-extern const char *login_to_server_strings[];
-extern const char *play_to_client_strings[];
-extern const char *play_to_server_strings[];
+extern const char *handshaking_toserver_strings[];
+extern const char *status_toclient_strings[];
+extern const char *login_toclient_strings[];
+extern const char *login_toserver_strings[];
+extern const char *play_toclient_strings[];
+extern const char *play_toserver_strings[];
 extern const char **protocol_strings[protocol_state_max][protocol_direction_max];
 extern const int protocol_max_ids[protocol_state_max][protocol_direction_max];
+void *generic_toclient_decode(int state, int32_t id, char * src, size_t len);
 
 
 typedef struct {

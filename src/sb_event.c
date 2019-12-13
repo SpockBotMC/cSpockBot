@@ -53,14 +53,12 @@ uint64_t sbev_reg_event(sbev_eventcore *ev, char const *nomen) {
   uv_rwlock_wrlock(&ev->lock);
   if(ev->cur == ev->max) {
     ev->max *= 2;
-    sbev_event_entry *p = realloc(ev->entries, sizeof(*ev->entries) * ev->max);
-    CHK_ALLOC(p);
-    if(ev->entries != p) {
-      ev->entries = p;
-      HASH_CLEAR(hh, ev->entries_map);
-      for(uint64_t i = 0; i < ev->cur; i++)
-        HASH_ADD_KEYPTR(hh, ev->entries_map, p[i].nomen, sdslen(p[i].nomen), &p[i]);
-    }
+    HASH_CLEAR(hh, ev->entries_map);
+    CHK_ALLOC(ev->entries
+              = realloc(ev->entries, sizeof(*ev->entries) * ev->max));
+    for(uint64_t i = 0; i < ev->cur; i++)
+        HASH_ADD_KEYPTR(hh, ev->entries_map, ev->entries[i].nomen,
+                        sdslen(ev->entries[i].nomen), &ev->entries[i]);
   }
   uint64_t handle = ev->cur++;
   sbev_event_entry *ent = &ev->entries[handle];
@@ -148,9 +146,11 @@ void sbev_emit_event(sbev_eventcore *ev, uint64_t handle, void *ev_data,
   sbev_event_entry *ent = &ev->entries[handle];
   uv_rwlock_rdlock(&ent->lock);
   uint64_t cur = ent->cur;
-  sbev_cb_and_data *cbs = malloc(sizeof(*cbs) * cur);
-  CHK_ALLOC(cbs);
-  memcpy(cbs, &ent->cbs, sizeof(*cbs) * cur);
+  sbev_cb_and_data *cbs;
+  if(cur) {
+    CHK_ALLOC(cbs = malloc(sizeof(*cbs) * cur));
+    memcpy(cbs, ent->cbs, sizeof(*cbs) * cur);
+  }
   uv_rwlock_rdunlock(&ev->entries[handle].lock);
   uv_rwlock_rdunlock(&ev->lock);
   vgc_job *jobs = malloc(sizeof(*jobs) * cur);

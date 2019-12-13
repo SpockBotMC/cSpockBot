@@ -53,6 +53,8 @@ uint64_t sbev_reg_cb(sbev_eventcore *ev, uint64_t ev_handle, sbev_event_cb cb,
                      void *cb_data);
 void sbev_reg_event_cb(sbev_eventcore *ev, char const *nomen, sbev_event_cb cb,
                        void *cb_data);
+void sbev_emit_event(sbev_eventcore *ev, uint64_t handle, void *ev_data,
+                     vgc_counter *count);
 
 void sbev_run_event_once(sbev_eventcore *ev);
 void sbev_run_event_continous(sbev_eventcore *ev);

@@ -5,6 +5,7 @@
 #include "uthash.h"
 #include "logc/log.h"
 #include "sb_event.h"
+#include "sb_net.h"
 #include "fibers/vgc.h"
 
 #define ERR_CHK(x, str) do { if(x < 0) { log_error(str); return -1;}} while(0)
@@ -18,7 +19,14 @@
 
 noreturn static void run_event(vgc_fiber fiber) {
   sbev_eventcore ev;
+  sbnet_netcore net;
+  sbnet_settings settings = {
+    .addr = "localhost",
+    .port = 25565,
+    .username = "nickelpro"
+  };
   sbev_init_event(&ev, fiber);
+  sbnet_init_net(&net, &ev, settings);
   sbev_start_event(&ev, 1);
   exit(0);
 }
@@ -35,7 +43,7 @@ int main(int argc, char *argv[]) {
   vgc_scheduler_init(&sched, 128);
   vgc_job job = vgc_job_init(run_event, NULL, FIBER_HI);
   vgc_enque_job(&sched, job, NULL);
-  for(int i = 0; i < cpu_count; i++)
-    uv_thread_create(&threads[i], vgc_scheduler_run, &sched);
+  //for(int i = 0; i < cpu_count; i++)
+  //  uv_thread_create(&threads[i], vgc_scheduler_run, &sched);
   vgc_scheduler_run(&sched);
 }

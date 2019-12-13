@@ -8,199 +8,199 @@
 
 #include "1_14_4_proto.h"
 
-const char *handshaking_to_server_strings[] = {
-  "handshaking_to_server_set_protocol",
-  "handshaking_to_server_legacy_server_list_ping"
+const char *handshaking_toserver_strings[] = {
+  "handshaking_toserver_set_protocol",
+  "handshaking_toserver_legacy_server_list_ping"
 };
 
-const char *status_to_client_strings[] = {
-  "status_to_client_server_info",
-  "status_to_client_ping"
+const char *status_toclient_strings[] = {
+  "status_toclient_server_info",
+  "status_toclient_ping"
 };
 
-const char *status_to_server_strings[] = {
-  "status_to_server_ping_start",
-  "status_to_server_ping"
+const char *status_toserver_strings[] = {
+  "status_toserver_ping_start",
+  "status_toserver_ping"
 };
 
-const char *login_to_client_strings[] = {
-  "login_to_client_disconnect",
-  "login_to_client_encryption_begin",
-  "login_to_client_success",
-  "login_to_client_compress",
-  "login_to_client_login_plugin_request"
+const char *login_toclient_strings[] = {
+  "login_toclient_disconnect",
+  "login_toclient_encryption_begin",
+  "login_toclient_success",
+  "login_toclient_compress",
+  "login_toclient_login_plugin_request"
 };
 
-const char *login_to_server_strings[] = {
-  "login_to_server_login_start",
-  "login_to_server_encryption_begin",
-  "login_to_server_login_plugin_response"
+const char *login_toserver_strings[] = {
+  "login_toserver_login_start",
+  "login_toserver_encryption_begin",
+  "login_toserver_login_plugin_response"
 };
 
-const char *play_to_client_strings[] = {
-  "play_to_client_spawn_entity",
-  "play_to_client_spawn_entity_experience_orb",
-  "play_to_client_spawn_entity_weather",
-  "play_to_client_spawn_entity_living",
-  "play_to_client_spawn_entity_painting",
-  "play_to_client_named_entity_spawn",
-  "play_to_client_animation",
-  "play_to_client_statistics",
-  "play_to_client_block_break_animation",
-  "play_to_client_tile_entity_data",
-  "play_to_client_block_action",
-  "play_to_client_block_change",
-  "play_to_client_boss_bar",
-  "play_to_client_difficulty",
-  "play_to_client_chat",
-  "play_to_client_multi_block_change",
-  "play_to_client_tab_complete",
-  "play_to_client_declare_commands",
-  "play_to_client_transaction",
-  "play_to_client_close_window",
-  "play_to_client_window_items",
-  "play_to_client_craft_progress_bar",
-  "play_to_client_set_slot",
-  "play_to_client_set_cooldown",
-  "play_to_client_custom_payload",
-  "play_to_client_named_sound_effect",
-  "play_to_client_kick_disconnect",
-  "play_to_client_entity_status",
-  "play_to_client_explosion",
-  "play_to_client_unload_chunk",
-  "play_to_client_game_state_change",
-  "play_to_client_open_horse_window",
-  "play_to_client_keep_alive",
-  "play_to_client_map_chunk",
-  "play_to_client_world_event",
-  "play_to_client_world_particles",
-  "play_to_client_update_light",
-  "play_to_client_login",
-  "play_to_client_map",
-  "play_to_client_trade_list",
-  "play_to_client_rel_entity_move",
-  "play_to_client_entity_move_look",
-  "play_to_client_entity_look",
-  "play_to_client_entity",
-  "play_to_client_vehicle_move",
-  "play_to_client_open_book",
-  "play_to_client_open_window",
-  "play_to_client_open_sign_entity",
-  "play_to_client_craft_recipe_response",
-  "play_to_client_abilities",
-  "play_to_client_combat_event",
-  "play_to_client_player_info",
-  "play_to_client_face_player",
-  "play_to_client_position",
-  "play_to_client_unlock_recipes",
-  "play_to_client_entity_destroy",
-  "play_to_client_remove_entity_effect",
-  "play_to_client_resource_pack_send",
-  "play_to_client_respawn",
-  "play_to_client_entity_head_rotation",
-  "play_to_client_select_advancement_tab",
-  "play_to_client_world_border",
-  "play_to_client_camera",
-  "play_to_client_held_item_slot",
-  "play_to_client_update_view_position",
-  "play_to_client_update_view_distance",
-  "play_to_client_scoreboard_display_objective",
-  "play_to_client_entity_metadata",
-  "play_to_client_attach_entity",
-  "play_to_client_entity_velocity",
-  "play_to_client_entity_equipment",
-  "play_to_client_experience",
-  "play_to_client_update_health",
-  "play_to_client_scoreboard_objective",
-  "play_to_client_set_passengers",
-  "play_to_client_teams",
-  "play_to_client_scoreboard_score",
-  "play_to_client_spawn_position",
-  "play_to_client_update_time",
-  "play_to_client_title",
-  "play_to_client_entity_sound_effect",
-  "play_to_client_sound_effect",
-  "play_to_client_stop_sound",
-  "play_to_client_playerlist_header",
-  "play_to_client_nbt_query_response",
-  "play_to_client_collect",
-  "play_to_client_entity_teleport",
-  "play_to_client_advancements",
-  "play_to_client_entity_update_attributes",
-  "play_to_client_entity_effect",
-  "play_to_client_declare_recipes",
-  "play_to_client_tags",
-  "play_to_client_acknowledge_player_digging"
+const char *play_toclient_strings[] = {
+  "play_toclient_spawn_entity",
+  "play_toclient_spawn_entity_experience_orb",
+  "play_toclient_spawn_entity_weather",
+  "play_toclient_spawn_entity_living",
+  "play_toclient_spawn_entity_painting",
+  "play_toclient_named_entity_spawn",
+  "play_toclient_animation",
+  "play_toclient_statistics",
+  "play_toclient_block_break_animation",
+  "play_toclient_tile_entity_data",
+  "play_toclient_block_action",
+  "play_toclient_block_change",
+  "play_toclient_boss_bar",
+  "play_toclient_difficulty",
+  "play_toclient_chat",
+  "play_toclient_multi_block_change",
+  "play_toclient_tab_complete",
+  "play_toclient_declare_commands",
+  "play_toclient_transaction",
+  "play_toclient_close_window",
+  "play_toclient_window_items",
+  "play_toclient_craft_progress_bar",
+  "play_toclient_set_slot",
+  "play_toclient_set_cooldown",
+  "play_toclient_custom_payload",
+  "play_toclient_named_sound_effect",
+  "play_toclient_kick_disconnect",
+  "play_toclient_entity_status",
+  "play_toclient_explosion",
+  "play_toclient_unload_chunk",
+  "play_toclient_game_state_change",
+  "play_toclient_open_horse_window",
+  "play_toclient_keep_alive",
+  "play_toclient_map_chunk",
+  "play_toclient_world_event",
+  "play_toclient_world_particles",
+  "play_toclient_update_light",
+  "play_toclient_login",
+  "play_toclient_map",
+  "play_toclient_trade_list",
+  "play_toclient_rel_entity_move",
+  "play_toclient_entity_move_look",
+  "play_toclient_entity_look",
+  "play_toclient_entity",
+  "play_toclient_vehicle_move",
+  "play_toclient_open_book",
+  "play_toclient_open_window",
+  "play_toclient_open_sign_entity",
+  "play_toclient_craft_recipe_response",
+  "play_toclient_abilities",
+  "play_toclient_combat_event",
+  "play_toclient_player_info",
+  "play_toclient_face_player",
+  "play_toclient_position",
+  "play_toclient_unlock_recipes",
+  "play_toclient_entity_destroy",
+  "play_toclient_remove_entity_effect",
+  "play_toclient_resource_pack_send",
+  "play_toclient_respawn",
+  "play_toclient_entity_head_rotation",
+  "play_toclient_select_advancement_tab",
+  "play_toclient_world_border",
+  "play_toclient_camera",
+  "play_toclient_held_item_slot",
+  "play_toclient_update_view_position",
+  "play_toclient_update_view_distance",
+  "play_toclient_scoreboard_display_objective",
+  "play_toclient_entity_metadata",
+  "play_toclient_attach_entity",
+  "play_toclient_entity_velocity",
+  "play_toclient_entity_equipment",
+  "play_toclient_experience",
+  "play_toclient_update_health",
+  "play_toclient_scoreboard_objective",
+  "play_toclient_set_passengers",
+  "play_toclient_teams",
+  "play_toclient_scoreboard_score",
+  "play_toclient_spawn_position",
+  "play_toclient_update_time",
+  "play_toclient_title",
+  "play_toclient_entity_sound_effect",
+  "play_toclient_sound_effect",
+  "play_toclient_stop_sound",
+  "play_toclient_playerlist_header",
+  "play_toclient_nbt_query_response",
+  "play_toclient_collect",
+  "play_toclient_entity_teleport",
+  "play_toclient_advancements",
+  "play_toclient_entity_update_attributes",
+  "play_toclient_entity_effect",
+  "play_toclient_declare_recipes",
+  "play_toclient_tags",
+  "play_toclient_acknowledge_player_digging"
 };
 
-const char *play_to_server_strings[] = {
-  "play_to_server_teleport_confirm",
-  "play_to_server_query_block_nbt",
-  "play_to_server_set_difficulty",
-  "play_to_server_chat",
-  "play_to_server_client_command",
-  "play_to_server_settings",
-  "play_to_server_tab_complete",
-  "play_to_server_transaction",
-  "play_to_server_enchant_item",
-  "play_to_server_window_click",
-  "play_to_server_close_window",
-  "play_to_server_custom_payload",
-  "play_to_server_edit_book",
-  "play_to_server_query_entity_nbt",
-  "play_to_server_use_entity",
-  "play_to_server_keep_alive",
-  "play_to_server_lock_difficulty",
-  "play_to_server_position",
-  "play_to_server_position_look",
-  "play_to_server_look",
-  "play_to_server_flying",
-  "play_to_server_vehicle_move",
-  "play_to_server_steer_boat",
-  "play_to_server_pick_item",
-  "play_to_server_craft_recipe_request",
-  "play_to_server_abilities",
-  "play_to_server_block_dig",
-  "play_to_server_entity_action",
-  "play_to_server_steer_vehicle",
-  "play_to_server_crafting_book_data",
-  "play_to_server_name_item",
-  "play_to_server_resource_pack_receive",
-  "play_to_server_advancement_tab",
-  "play_to_server_select_trade",
-  "play_to_server_set_beacon_effect",
-  "play_to_server_held_item_slot",
-  "play_to_server_update_command_block",
-  "play_to_server_update_command_block_minecart",
-  "play_to_server_set_creative_slot",
-  "play_to_server_update_jigsaw_block",
-  "play_to_server_update_structure_block",
-  "play_to_server_update_sign",
-  "play_to_server_arm_animation",
-  "play_to_server_spectate",
-  "play_to_server_block_place",
-  "play_to_server_use_item"
+const char *play_toserver_strings[] = {
+  "play_toserver_teleport_confirm",
+  "play_toserver_query_block_nbt",
+  "play_toserver_set_difficulty",
+  "play_toserver_chat",
+  "play_toserver_client_command",
+  "play_toserver_settings",
+  "play_toserver_tab_complete",
+  "play_toserver_transaction",
+  "play_toserver_enchant_item",
+  "play_toserver_window_click",
+  "play_toserver_close_window",
+  "play_toserver_custom_payload",
+  "play_toserver_edit_book",
+  "play_toserver_query_entity_nbt",
+  "play_toserver_use_entity",
+  "play_toserver_keep_alive",
+  "play_toserver_lock_difficulty",
+  "play_toserver_position",
+  "play_toserver_position_look",
+  "play_toserver_look",
+  "play_toserver_flying",
+  "play_toserver_vehicle_move",
+  "play_toserver_steer_boat",
+  "play_toserver_pick_item",
+  "play_toserver_craft_recipe_request",
+  "play_toserver_abilities",
+  "play_toserver_block_dig",
+  "play_toserver_entity_action",
+  "play_toserver_steer_vehicle",
+  "play_toserver_crafting_book_data",
+  "play_toserver_name_item",
+  "play_toserver_resource_pack_receive",
+  "play_toserver_advancement_tab",
+  "play_toserver_select_trade",
+  "play_toserver_set_beacon_effect",
+  "play_toserver_held_item_slot",
+  "play_toserver_update_command_block",
+  "play_toserver_update_command_block_minecart",
+  "play_toserver_set_creative_slot",
+  "play_toserver_update_jigsaw_block",
+  "play_toserver_update_structure_block",
+  "play_toserver_update_sign",
+  "play_toserver_arm_animation",
+  "play_toserver_spectate",
+  "play_toserver_block_place",
+  "play_toserver_use_item"
 };
 
 const char **protocol_strings[protocol_state_max][protocol_direction_max] = {
-  [handshaking_id][to_server_id] = handshaking_to_server_strings,
-  [status_id][to_client_id] = status_to_client_strings,
-  [status_id][to_server_id] = status_to_server_strings,
-  [login_id][to_client_id] = login_to_client_strings,
-  [login_id][to_server_id] = login_to_server_strings,
-  [play_id][to_client_id] = play_to_client_strings,
-  [play_id][to_server_id] = play_to_server_strings
+  [handshaking_id][toserver_id] = handshaking_toserver_strings,
+  [status_id][toclient_id] = status_toclient_strings,
+  [status_id][toserver_id] = status_toserver_strings,
+  [login_id][toclient_id] = login_toclient_strings,
+  [login_id][toserver_id] = login_toserver_strings,
+  [play_id][toclient_id] = play_toclient_strings,
+  [play_id][toserver_id] = play_toserver_strings
 };
 
 const int protocol_max_ids[protocol_state_max][protocol_direction_max] = {
-  [handshaking_id][to_client_id] = handshaking_to_client_max,
-  [handshaking_id][to_server_id] = handshaking_to_server_max,
-  [status_id][to_client_id] = status_to_client_max,
-  [status_id][to_server_id] = status_to_server_max,
-  [login_id][to_client_id] = login_to_client_max,
-  [login_id][to_server_id] = login_to_server_max,
-  [play_id][to_client_id] = play_to_client_max,
-  [play_id][to_server_id] = play_to_server_max
+  [handshaking_id][toclient_id] = handshaking_toclient_max,
+  [handshaking_id][toserver_id] = handshaking_toserver_max,
+  [status_id][toclient_id] = status_toclient_max,
+  [status_id][toserver_id] = status_toserver_max,
+  [login_id][toclient_id] = login_toclient_max,
+  [login_id][toserver_id] = login_toserver_max,
+  [play_id][toclient_id] = play_toclient_max,
+  [play_id][toserver_id] = play_toserver_max
 };
 
 int walk_handshaking_toserver_set_protocol(char * source, size_t max_len) {
@@ -9224,4 +9224,531 @@ void free_play_toserver_advancement_tab(play_toserver_advancement_tab packet) {
       // No free-able types
       break;
   }
+}
+
+void * generic_toclient_decode(int state, int32_t id, char * src, size_t len) {
+  void * dest;
+  switch(state) {
+    case status_id:
+      switch(id) {
+        case status_toclient_server_info_id:
+          if(walk_status_toclient_server_info(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(status_toclient_server_info)))) return NULL;
+          dec_status_toclient_server_info(dest, src);
+          break;
+        case status_toclient_ping_id:
+          if(walk_status_toclient_ping(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(status_toclient_ping)))) return NULL;
+          dec_status_toclient_ping(dest, src);
+          break;
+        default:
+          return NULL;
+      }
+      break;
+    case login_id:
+      switch(id) {
+        case login_toclient_disconnect_id:
+          if(walk_login_toclient_disconnect(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(login_toclient_disconnect)))) return NULL;
+          dec_login_toclient_disconnect(dest, src);
+          break;
+        case login_toclient_encryption_begin_id:
+          if(walk_login_toclient_encryption_begin(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(login_toclient_encryption_begin)))) return NULL;
+          dec_login_toclient_encryption_begin(dest, src);
+          break;
+        case login_toclient_success_id:
+          if(walk_login_toclient_success(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(login_toclient_success)))) return NULL;
+          dec_login_toclient_success(dest, src);
+          break;
+        case login_toclient_compress_id:
+          if(walk_login_toclient_compress(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(login_toclient_compress)))) return NULL;
+          dec_login_toclient_compress(dest, src);
+          break;
+        case login_toclient_login_plugin_request_id:
+          if(walk_login_toclient_login_plugin_request(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(login_toclient_login_plugin_request)))) return NULL;
+          dec_login_toclient_login_plugin_request(dest, src);
+          break;
+        default:
+          return NULL;
+      }
+      break;
+    case play_id:
+      switch(id) {
+        case play_toclient_spawn_entity_id:
+          if(walk_play_toclient_spawn_entity(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_spawn_entity)))) return NULL;
+          dec_play_toclient_spawn_entity(dest, src);
+          break;
+        case play_toclient_spawn_entity_experience_orb_id:
+          if(walk_play_toclient_spawn_entity_experience_orb(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_spawn_entity_experience_orb)))) return NULL;
+          dec_play_toclient_spawn_entity_experience_orb(dest, src);
+          break;
+        case play_toclient_spawn_entity_weather_id:
+          if(walk_play_toclient_spawn_entity_weather(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_spawn_entity_weather)))) return NULL;
+          dec_play_toclient_spawn_entity_weather(dest, src);
+          break;
+        case play_toclient_spawn_entity_living_id:
+          if(walk_play_toclient_spawn_entity_living(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_spawn_entity_living)))) return NULL;
+          dec_play_toclient_spawn_entity_living(dest, src);
+          break;
+        case play_toclient_spawn_entity_painting_id:
+          if(walk_play_toclient_spawn_entity_painting(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_spawn_entity_painting)))) return NULL;
+          dec_play_toclient_spawn_entity_painting(dest, src);
+          break;
+        case play_toclient_named_entity_spawn_id:
+          if(walk_play_toclient_named_entity_spawn(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_named_entity_spawn)))) return NULL;
+          dec_play_toclient_named_entity_spawn(dest, src);
+          break;
+        case play_toclient_animation_id:
+          if(walk_play_toclient_animation(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_animation)))) return NULL;
+          dec_play_toclient_animation(dest, src);
+          break;
+        case play_toclient_statistics_id:
+          if(walk_play_toclient_statistics(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_statistics)))) return NULL;
+          dec_play_toclient_statistics(dest, src);
+          break;
+        case play_toclient_advancements_id:
+          if(walk_play_toclient_advancements(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_advancements)))) return NULL;
+          dec_play_toclient_advancements(dest, src);
+          break;
+        case play_toclient_block_break_animation_id:
+          if(walk_play_toclient_block_break_animation(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_block_break_animation)))) return NULL;
+          dec_play_toclient_block_break_animation(dest, src);
+          break;
+        case play_toclient_tile_entity_data_id:
+          if(walk_play_toclient_tile_entity_data(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_tile_entity_data)))) return NULL;
+          dec_play_toclient_tile_entity_data(dest, src);
+          break;
+        case play_toclient_block_action_id:
+          if(walk_play_toclient_block_action(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_block_action)))) return NULL;
+          dec_play_toclient_block_action(dest, src);
+          break;
+        case play_toclient_block_change_id:
+          if(walk_play_toclient_block_change(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_block_change)))) return NULL;
+          dec_play_toclient_block_change(dest, src);
+          break;
+        case play_toclient_boss_bar_id:
+          if(walk_play_toclient_boss_bar(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_boss_bar)))) return NULL;
+          dec_play_toclient_boss_bar(dest, src);
+          break;
+        case play_toclient_difficulty_id:
+          if(walk_play_toclient_difficulty(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_difficulty)))) return NULL;
+          dec_play_toclient_difficulty(dest, src);
+          break;
+        case play_toclient_tab_complete_id:
+          if(walk_play_toclient_tab_complete(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_tab_complete)))) return NULL;
+          dec_play_toclient_tab_complete(dest, src);
+          break;
+        case play_toclient_declare_commands_id:
+          if(walk_play_toclient_declare_commands(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_declare_commands)))) return NULL;
+          dec_play_toclient_declare_commands(dest, src);
+          break;
+        case play_toclient_face_player_id:
+          if(walk_play_toclient_face_player(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_face_player)))) return NULL;
+          dec_play_toclient_face_player(dest, src);
+          break;
+        case play_toclient_nbt_query_response_id:
+          if(walk_play_toclient_nbt_query_response(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_nbt_query_response)))) return NULL;
+          dec_play_toclient_nbt_query_response(dest, src);
+          break;
+        case play_toclient_chat_id:
+          if(walk_play_toclient_chat(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_chat)))) return NULL;
+          dec_play_toclient_chat(dest, src);
+          break;
+        case play_toclient_multi_block_change_id:
+          if(walk_play_toclient_multi_block_change(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_multi_block_change)))) return NULL;
+          dec_play_toclient_multi_block_change(dest, src);
+          break;
+        case play_toclient_transaction_id:
+          if(walk_play_toclient_transaction(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_transaction)))) return NULL;
+          dec_play_toclient_transaction(dest, src);
+          break;
+        case play_toclient_close_window_id:
+          if(walk_play_toclient_close_window(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_close_window)))) return NULL;
+          dec_play_toclient_close_window(dest, src);
+          break;
+        case play_toclient_open_window_id:
+          if(walk_play_toclient_open_window(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_open_window)))) return NULL;
+          dec_play_toclient_open_window(dest, src);
+          break;
+        case play_toclient_window_items_id:
+          if(walk_play_toclient_window_items(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_window_items)))) return NULL;
+          dec_play_toclient_window_items(dest, src);
+          break;
+        case play_toclient_craft_progress_bar_id:
+          if(walk_play_toclient_craft_progress_bar(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_craft_progress_bar)))) return NULL;
+          dec_play_toclient_craft_progress_bar(dest, src);
+          break;
+        case play_toclient_set_slot_id:
+          if(walk_play_toclient_set_slot(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_set_slot)))) return NULL;
+          dec_play_toclient_set_slot(dest, src);
+          break;
+        case play_toclient_set_cooldown_id:
+          if(walk_play_toclient_set_cooldown(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_set_cooldown)))) return NULL;
+          dec_play_toclient_set_cooldown(dest, src);
+          break;
+        case play_toclient_custom_payload_id:
+          if(walk_play_toclient_custom_payload(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_custom_payload)))) return NULL;
+          dec_play_toclient_custom_payload(dest, src, len);
+          break;
+        case play_toclient_named_sound_effect_id:
+          if(walk_play_toclient_named_sound_effect(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_named_sound_effect)))) return NULL;
+          dec_play_toclient_named_sound_effect(dest, src);
+          break;
+        case play_toclient_kick_disconnect_id:
+          if(walk_play_toclient_kick_disconnect(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_kick_disconnect)))) return NULL;
+          dec_play_toclient_kick_disconnect(dest, src);
+          break;
+        case play_toclient_entity_status_id:
+          if(walk_play_toclient_entity_status(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_entity_status)))) return NULL;
+          dec_play_toclient_entity_status(dest, src);
+          break;
+        case play_toclient_explosion_id:
+          if(walk_play_toclient_explosion(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_explosion)))) return NULL;
+          dec_play_toclient_explosion(dest, src);
+          break;
+        case play_toclient_unload_chunk_id:
+          if(walk_play_toclient_unload_chunk(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_unload_chunk)))) return NULL;
+          dec_play_toclient_unload_chunk(dest, src);
+          break;
+        case play_toclient_game_state_change_id:
+          if(walk_play_toclient_game_state_change(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_game_state_change)))) return NULL;
+          dec_play_toclient_game_state_change(dest, src);
+          break;
+        case play_toclient_open_horse_window_id:
+          if(walk_play_toclient_open_horse_window(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_open_horse_window)))) return NULL;
+          dec_play_toclient_open_horse_window(dest, src);
+          break;
+        case play_toclient_keep_alive_id:
+          if(walk_play_toclient_keep_alive(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_keep_alive)))) return NULL;
+          dec_play_toclient_keep_alive(dest, src);
+          break;
+        case play_toclient_map_chunk_id:
+          if(walk_play_toclient_map_chunk(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_map_chunk)))) return NULL;
+          dec_play_toclient_map_chunk(dest, src);
+          break;
+        case play_toclient_world_event_id:
+          if(walk_play_toclient_world_event(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_world_event)))) return NULL;
+          dec_play_toclient_world_event(dest, src);
+          break;
+        case play_toclient_world_particles_id:
+          if(walk_play_toclient_world_particles(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_world_particles)))) return NULL;
+          dec_play_toclient_world_particles(dest, src);
+          break;
+        case play_toclient_update_light_id:
+          if(walk_play_toclient_update_light(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_update_light)))) return NULL;
+          dec_play_toclient_update_light(dest, src, len);
+          break;
+        case play_toclient_login_id:
+          if(walk_play_toclient_login(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_login)))) return NULL;
+          dec_play_toclient_login(dest, src);
+          break;
+        case play_toclient_map_id:
+          if(walk_play_toclient_map(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_map)))) return NULL;
+          dec_play_toclient_map(dest, src);
+          break;
+        case play_toclient_trade_list_id:
+          if(walk_play_toclient_trade_list(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_trade_list)))) return NULL;
+          dec_play_toclient_trade_list(dest, src);
+          break;
+        case play_toclient_rel_entity_move_id:
+          if(walk_play_toclient_rel_entity_move(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_rel_entity_move)))) return NULL;
+          dec_play_toclient_rel_entity_move(dest, src);
+          break;
+        case play_toclient_entity_move_look_id:
+          if(walk_play_toclient_entity_move_look(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_entity_move_look)))) return NULL;
+          dec_play_toclient_entity_move_look(dest, src);
+          break;
+        case play_toclient_entity_look_id:
+          if(walk_play_toclient_entity_look(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_entity_look)))) return NULL;
+          dec_play_toclient_entity_look(dest, src);
+          break;
+        case play_toclient_entity_id:
+          if(walk_play_toclient_entity(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_entity)))) return NULL;
+          dec_play_toclient_entity(dest, src);
+          break;
+        case play_toclient_vehicle_move_id:
+          if(walk_play_toclient_vehicle_move(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_vehicle_move)))) return NULL;
+          dec_play_toclient_vehicle_move(dest, src);
+          break;
+        case play_toclient_open_book_id:
+          if(walk_play_toclient_open_book(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_open_book)))) return NULL;
+          dec_play_toclient_open_book(dest, src);
+          break;
+        case play_toclient_open_sign_entity_id:
+          if(walk_play_toclient_open_sign_entity(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_open_sign_entity)))) return NULL;
+          dec_play_toclient_open_sign_entity(dest, src);
+          break;
+        case play_toclient_craft_recipe_response_id:
+          if(walk_play_toclient_craft_recipe_response(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_craft_recipe_response)))) return NULL;
+          dec_play_toclient_craft_recipe_response(dest, src);
+          break;
+        case play_toclient_abilities_id:
+          if(walk_play_toclient_abilities(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_abilities)))) return NULL;
+          dec_play_toclient_abilities(dest, src);
+          break;
+        case play_toclient_combat_event_id:
+          if(walk_play_toclient_combat_event(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_combat_event)))) return NULL;
+          dec_play_toclient_combat_event(dest, src);
+          break;
+        case play_toclient_player_info_id:
+          if(walk_play_toclient_player_info(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_player_info)))) return NULL;
+          dec_play_toclient_player_info(dest, src);
+          break;
+        case play_toclient_position_id:
+          if(walk_play_toclient_position(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_position)))) return NULL;
+          dec_play_toclient_position(dest, src);
+          break;
+        case play_toclient_unlock_recipes_id:
+          if(walk_play_toclient_unlock_recipes(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_unlock_recipes)))) return NULL;
+          dec_play_toclient_unlock_recipes(dest, src);
+          break;
+        case play_toclient_entity_destroy_id:
+          if(walk_play_toclient_entity_destroy(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_entity_destroy)))) return NULL;
+          dec_play_toclient_entity_destroy(dest, src);
+          break;
+        case play_toclient_remove_entity_effect_id:
+          if(walk_play_toclient_remove_entity_effect(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_remove_entity_effect)))) return NULL;
+          dec_play_toclient_remove_entity_effect(dest, src);
+          break;
+        case play_toclient_resource_pack_send_id:
+          if(walk_play_toclient_resource_pack_send(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_resource_pack_send)))) return NULL;
+          dec_play_toclient_resource_pack_send(dest, src);
+          break;
+        case play_toclient_respawn_id:
+          if(walk_play_toclient_respawn(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_respawn)))) return NULL;
+          dec_play_toclient_respawn(dest, src);
+          break;
+        case play_toclient_entity_update_attributes_id:
+          if(walk_play_toclient_entity_update_attributes(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_entity_update_attributes)))) return NULL;
+          dec_play_toclient_entity_update_attributes(dest, src);
+          break;
+        case play_toclient_world_border_id:
+          if(walk_play_toclient_world_border(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_world_border)))) return NULL;
+          dec_play_toclient_world_border(dest, src);
+          break;
+        case play_toclient_camera_id:
+          if(walk_play_toclient_camera(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_camera)))) return NULL;
+          dec_play_toclient_camera(dest, src);
+          break;
+        case play_toclient_held_item_slot_id:
+          if(walk_play_toclient_held_item_slot(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_held_item_slot)))) return NULL;
+          dec_play_toclient_held_item_slot(dest, src);
+          break;
+        case play_toclient_update_view_position_id:
+          if(walk_play_toclient_update_view_position(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_update_view_position)))) return NULL;
+          dec_play_toclient_update_view_position(dest, src);
+          break;
+        case play_toclient_update_view_distance_id:
+          if(walk_play_toclient_update_view_distance(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_update_view_distance)))) return NULL;
+          dec_play_toclient_update_view_distance(dest, src);
+          break;
+        case play_toclient_scoreboard_display_objective_id:
+          if(walk_play_toclient_scoreboard_display_objective(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_scoreboard_display_objective)))) return NULL;
+          dec_play_toclient_scoreboard_display_objective(dest, src);
+          break;
+        case play_toclient_entity_metadata_id:
+          if(walk_play_toclient_entity_metadata(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_entity_metadata)))) return NULL;
+          dec_play_toclient_entity_metadata(dest, src);
+          break;
+        case play_toclient_attach_entity_id:
+          if(walk_play_toclient_attach_entity(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_attach_entity)))) return NULL;
+          dec_play_toclient_attach_entity(dest, src);
+          break;
+        case play_toclient_entity_velocity_id:
+          if(walk_play_toclient_entity_velocity(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_entity_velocity)))) return NULL;
+          dec_play_toclient_entity_velocity(dest, src);
+          break;
+        case play_toclient_entity_equipment_id:
+          if(walk_play_toclient_entity_equipment(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_entity_equipment)))) return NULL;
+          dec_play_toclient_entity_equipment(dest, src);
+          break;
+        case play_toclient_experience_id:
+          if(walk_play_toclient_experience(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_experience)))) return NULL;
+          dec_play_toclient_experience(dest, src);
+          break;
+        case play_toclient_update_health_id:
+          if(walk_play_toclient_update_health(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_update_health)))) return NULL;
+          dec_play_toclient_update_health(dest, src);
+          break;
+        case play_toclient_scoreboard_objective_id:
+          if(walk_play_toclient_scoreboard_objective(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_scoreboard_objective)))) return NULL;
+          dec_play_toclient_scoreboard_objective(dest, src);
+          break;
+        case play_toclient_set_passengers_id:
+          if(walk_play_toclient_set_passengers(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_set_passengers)))) return NULL;
+          dec_play_toclient_set_passengers(dest, src);
+          break;
+        case play_toclient_teams_id:
+          if(walk_play_toclient_teams(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_teams)))) return NULL;
+          dec_play_toclient_teams(dest, src);
+          break;
+        case play_toclient_scoreboard_score_id:
+          if(walk_play_toclient_scoreboard_score(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_scoreboard_score)))) return NULL;
+          dec_play_toclient_scoreboard_score(dest, src);
+          break;
+        case play_toclient_spawn_position_id:
+          if(walk_play_toclient_spawn_position(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_spawn_position)))) return NULL;
+          dec_play_toclient_spawn_position(dest, src);
+          break;
+        case play_toclient_update_time_id:
+          if(walk_play_toclient_update_time(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_update_time)))) return NULL;
+          dec_play_toclient_update_time(dest, src);
+          break;
+        case play_toclient_title_id:
+          if(walk_play_toclient_title(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_title)))) return NULL;
+          dec_play_toclient_title(dest, src);
+          break;
+        case play_toclient_entity_sound_effect_id:
+          if(walk_play_toclient_entity_sound_effect(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_entity_sound_effect)))) return NULL;
+          dec_play_toclient_entity_sound_effect(dest, src);
+          break;
+        case play_toclient_stop_sound_id:
+          if(walk_play_toclient_stop_sound(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_stop_sound)))) return NULL;
+          dec_play_toclient_stop_sound(dest, src);
+          break;
+        case play_toclient_sound_effect_id:
+          if(walk_play_toclient_sound_effect(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_sound_effect)))) return NULL;
+          dec_play_toclient_sound_effect(dest, src);
+          break;
+        case play_toclient_playerlist_header_id:
+          if(walk_play_toclient_playerlist_header(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_playerlist_header)))) return NULL;
+          dec_play_toclient_playerlist_header(dest, src);
+          break;
+        case play_toclient_collect_id:
+          if(walk_play_toclient_collect(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_collect)))) return NULL;
+          dec_play_toclient_collect(dest, src);
+          break;
+        case play_toclient_entity_teleport_id:
+          if(walk_play_toclient_entity_teleport(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_entity_teleport)))) return NULL;
+          dec_play_toclient_entity_teleport(dest, src);
+          break;
+        case play_toclient_entity_head_rotation_id:
+          if(walk_play_toclient_entity_head_rotation(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_entity_head_rotation)))) return NULL;
+          dec_play_toclient_entity_head_rotation(dest, src);
+          break;
+        case play_toclient_entity_effect_id:
+          if(walk_play_toclient_entity_effect(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_entity_effect)))) return NULL;
+          dec_play_toclient_entity_effect(dest, src);
+          break;
+        case play_toclient_select_advancement_tab_id:
+          if(walk_play_toclient_select_advancement_tab(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_select_advancement_tab)))) return NULL;
+          dec_play_toclient_select_advancement_tab(dest, src);
+          break;
+        case play_toclient_declare_recipes_id:
+          if(walk_play_toclient_declare_recipes(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_declare_recipes)))) return NULL;
+          dec_play_toclient_declare_recipes(dest, src);
+          break;
+        case play_toclient_tags_id:
+          if(walk_play_toclient_tags(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_tags)))) return NULL;
+          dec_play_toclient_tags(dest, src);
+          break;
+        case play_toclient_acknowledge_player_digging_id:
+          if(walk_play_toclient_acknowledge_player_digging(src, len) != len) return NULL;
+          if(!(dest = malloc(sizeof(play_toclient_acknowledge_player_digging)))) return NULL;
+          dec_play_toclient_acknowledge_player_digging(dest, src);
+          break;
+        default:
+          return NULL;
+      }
+      break;
+    default:
+      return NULL;
+  }
+  return dest;
 }
