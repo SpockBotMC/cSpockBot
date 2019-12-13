@@ -173,6 +173,13 @@ void sbev_emit_event(sbev_eventcore *ev, uint64_t handle, void *ev_data,
   free(jobs);
 }
 
+void sbev_kill(sbev_eventcore *ev) {
+  log_debug("Kill called");
+  uv_rwlock_wrlock(&ev->lock);
+  ev->kill_flag = 1;
+  uv_rwlock_wrunlock(&ev->lock);
+}
+
 void sbev_run_event_once(sbev_eventcore *ev) {
   vgc_counter count;
   if(!ev->kill_flag)

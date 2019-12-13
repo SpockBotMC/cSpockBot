@@ -57,4 +57,5 @@ void sbev_reg_event_cb(sbev_eventcore *ev, char const *nomen, sbev_event_cb cb,
 void sbev_run_event_once(sbev_eventcore *ev);
 void sbev_run_event_continous(sbev_eventcore *ev);
 void sbev_start_event(sbev_eventcore *ev, int continuous);
+void sbev_kill(sbev_eventcore *ev);
 #endif

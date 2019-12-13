@@ -174,11 +174,9 @@ int walk_varint(char *source, size_t max_len) {
   for(; *(unsigned char *)source & 0x80; source++, len++) {
     if(len > 4)
       return varnum_invalid;
-    if((size_t)len > max_len)
+    if((size_t)len >= max_len)
       return varnum_overrun;
   }
-  if((size_t)len > max_len)
-    return varnum_overrun;
   return len;
 }
 
