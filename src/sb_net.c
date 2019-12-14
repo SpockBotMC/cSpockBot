@@ -18,14 +18,6 @@
 
 #define NO_SIZE -1
 
-/*
-| base |      | cur  |      | last |      |      |
-| 0x00 | 0x01 | 0x02 | 0x03 | 0x04 | 0x05 | 0x06 |
-<------------------  len = 7 -------------------->
-               <---- in_use = 3 --->
-                                    <- rem = 2 -->
-*/
-
 enum compression_state {
   uncompressed,
   compressed
