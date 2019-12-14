@@ -9,6 +9,15 @@
 #include "1_14_4_proto.h"
 #include "sds.h"
 
+
+/*
+| base |      | cur  |      | last |      |      |
+| 0x00 | 0x01 | 0x02 | 0x03 | 0x04 | 0x05 | 0x06 |
+<------------------  len = 7 -------------------->
+               <---- in_use = 3 --->
+                                    <- rem = 2 -->
+*/
+
 typedef struct {
   char *base;
   char *cur;
