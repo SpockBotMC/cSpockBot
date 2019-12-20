@@ -30,3 +30,12 @@ endif()
 
 target_link_libraries(main uv z)
 target_include_directories(main PRIVATE "include")
+
+
+add_executable(test
+    src/test.c             src/log.c              src/sds.c
+    src/datautils.c        src/cNBT/buffer.c      src/cNBT/nbt_loading.c
+    src/cNBT/nbt_parsing.c src/cNBT/nbt_treeops.c src/cNBT/nbt_util.c 
+)
+target_link_libraries(test z)
+target_include_directories(test PRIVATE "include")

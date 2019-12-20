@@ -189,10 +189,12 @@ char *enc_varint(char *dest, uint32_t source) {
 }
 
 char *dec_varint(int32_t *dest, char *source) {
-  for(; *(unsigned char *)source & 0x80; source++, *(uint32_t *)dest <<= 7) {
-    *(uint32_t *)dest |= *source & 0x7F;
+  *dest = 0;
+  int i = 0;
+  for(; *(unsigned char *)source & 0x80; source++, i+=7) {
+    *(uint32_t *)dest |= (*source & 0x7F) << i;
   }
-  *(uint32_t *)dest |= *source & 0x7F;
+  *(uint32_t *)dest |= (*source & 0x7F) << i;
   return ++source;
 }
 

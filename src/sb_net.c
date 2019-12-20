@@ -149,12 +149,25 @@ static void sbnet_write_cb(uv_write_t *write, int status) {
   free(write);
 }
 
+size_t sbnet_size_uncom_hdr(uint32_t src_size, uint32_t src_id) {
+  size_t pid_size = size_varint(src_id);
+  uint32_t total_size = src_size + pid_size;
+  return size_varint(total_size) + pid_size;
+}
+
+char * sbnet_enc_uncom_hdr(char *dest, uint32_t src_size, uint32_t src_id) {
+  size_t total_size = src_size + size_varint(src_id);
+  dest = enc_varint(dest, total_size);
+  return enc_varint(dest, src_id);
+}
+
 static void sbnet_connect_cb(uv_connect_t *connect, int status) {
   if(status < 0) {
     log_error("Error on connect: %s", uv_strerror(status));
     exit(-1);
   }
   sbnet_netcore *net = connect->data;
+  connect->handle->data = net;
   handshaking_toserver_set_protocol set_proto = {
     .protocol_version = 498,
     .server_host = sdsnew(net->settings.addr),
@@ -165,17 +178,24 @@ static void sbnet_connect_cb(uv_connect_t *connect, int status) {
     .username = sdsnew(net->settings.username)
   };
 
-  // ToDo: This is broken, need to encode packet_id and length
   size_t s_set_proto = size_handshaking_toserver_set_protocol(set_proto);
-  size_t s_login_start = size_login_toserver_login_start(login_start);
-  uv_buf_t buf = sbnet_buf_init(s_set_proto + s_login_start);
+  size_t s_set_proto_hdr = sbnet_size_uncom_hdr(s_set_proto, handshaking_toserver_set_protocol_id);
 
-  char *tmp = enc_handshaking_toserver_set_protocol(buf.base, set_proto);
+  size_t s_login_start = size_login_toserver_login_start(login_start);
+  size_t s_login_start_hdr = sbnet_size_uncom_hdr(s_login_start, login_toserver_login_start_id);
+
+  size_t tot_size = s_set_proto_hdr + s_set_proto + s_login_start_hdr + s_login_start;
+  uv_buf_t buf = sbnet_buf_init(tot_size);
+
+  char *tmp = sbnet_enc_uncom_hdr(buf.base, s_set_proto, handshaking_toserver_set_protocol_id);
+  tmp = enc_handshaking_toserver_set_protocol(tmp, set_proto);
+  tmp = sbnet_enc_uncom_hdr(tmp, s_login_start, login_toserver_login_start_id);
   enc_login_toserver_login_start(tmp, login_start);
 
   uv_write_t *write = malloc(sizeof(*write));
   CHK_ALLOC(write);
   write->data = buf.base;
+  net->proto_state = login_id;
   uv_write(write, connect->handle, &buf, 1, sbnet_write_cb);
   uv_read_start(connect->handle, sbnet_alloc_cb, sbnet_read_cb);
 
@@ -223,7 +243,7 @@ int sbnet_init_net(sbnet_netcore *net, sbev_eventcore *ev,
   net->proto_state = handshaking_id;
   net->next_packet_size = NO_SIZE;
   net->read_buf.len = 4096;
-  CHK_ALLOC(net->read_buf.base = malloc(net->read_buf.len));
+  CHK_ALLOC(net->read_buf.base = calloc(1, net->read_buf.len));
   net->read_buf.cur = net->read_buf.base;
   net->read_buf.in_use = 0;
   net->read_buf.rem = net->read_buf.len;
