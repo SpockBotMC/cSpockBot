@@ -183,6 +183,7 @@ noreturn void vgc_scheduler_run(void *p) {
     }
     fiber_data *fd = fiber->fd;
     fd->state = FIBER_RUN;
+
     *fiber = vgc_jump(*fiber);
 
     if(fd->state == FIBER_WAIT) {

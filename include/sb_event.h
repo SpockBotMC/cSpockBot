@@ -7,7 +7,7 @@
 #include "uthash.h"
 #include "fibers/vgc.h"
 
-typedef void (*sbev_event_cb)(vgc_fiber fiber, void *cb_data, void *ev_data,
+typedef void (*sbev_event_cb)(vgc_fiber *fiber, void *cb_data, void *ev_data,
                               uint64_t handle);
 
 typedef struct {
@@ -47,17 +47,17 @@ typedef struct {
   int kill_flag;
 } sbev_eventcore;
 
-void sbev_init_event(sbev_eventcore *ev, vgc_fiber fiber);
+void sbev_init_event(sbev_eventcore *ev);
 uint64_t sbev_reg_event(sbev_eventcore *ev, char const *nomen);
 uint64_t sbev_reg_cb(sbev_eventcore *ev, uint64_t ev_handle, sbev_event_cb cb,
                      void *cb_data);
 void sbev_reg_event_cb(sbev_eventcore *ev, char const *nomen, sbev_event_cb cb,
                        void *cb_data);
 void sbev_emit_event(sbev_eventcore *ev, uint64_t handle, void *ev_data,
-                     vgc_counter *count);
+                     vgc_fiber fiber, vgc_counter *count);
 
-void sbev_run_event_once(sbev_eventcore *ev);
-void sbev_run_event_continous(sbev_eventcore *ev);
-void sbev_start_event(sbev_eventcore *ev, int continuous);
+void sbev_run_event_once(sbev_eventcore *ev, vgc_fiber fiber);
+void sbev_run_event_continous(sbev_eventcore *ev, vgc_fiber fiber);
+void sbev_start_event(sbev_eventcore *ev, vgc_fiber fiber, int continuous);
 void sbev_kill(sbev_eventcore *ev);
 #endif

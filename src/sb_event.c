@@ -15,8 +15,7 @@
 
 #define ERR_CHK(x, str) do { if(x < 0) { log_error(str); exit(-1);}} while(0)
 
-void sbev_init_event(sbev_eventcore *ev, vgc_fiber fiber) {
-  ev->fiber = fiber;
+void sbev_init_event(sbev_eventcore *ev) {
   ERR_CHK(uv_rwlock_init(&ev->lock), "Failed to init rwlock");
   ev->entries_map = NULL;
   ev->max = 20; // Chosen by fair dice roll
@@ -131,7 +130,7 @@ typedef struct {
 
 void sbev_trampoline(vgc_fiber fiber) {
   sbev_tramp_arg * tmp = fiber.data;
-  tmp->cbs.cb(fiber, tmp->cbs.cb_data, tmp->ev_data, tmp->handle);
+  tmp->cbs.cb(&fiber, tmp->cbs.cb_data, tmp->ev_data, tmp->handle);
   free(tmp);
   vgc_fiber_finish(fiber);
 }
@@ -140,8 +139,11 @@ void sbev_trampoline(vgc_fiber fiber) {
 // nightmare. We need to operate on a local copy. The python version has the
 // exact same problem. This has performance implications, we will need to
 // revist this at some point.
+
+// We don't really need this fiber, we just need a pointer to the scheduler
+// which we could store in the eventcore. Reconsider this
 void sbev_emit_event(sbev_eventcore *ev, uint64_t handle, void *ev_data,
-                     vgc_counter *count) {
+                     vgc_fiber fiber, vgc_counter *count) {
   uv_rwlock_rdlock(&ev->lock);
   sbev_event_entry *ent = &ev->entries[handle];
   uv_rwlock_rdlock(&ent->lock);
@@ -165,7 +167,7 @@ void sbev_emit_event(sbev_eventcore *ev, uint64_t handle, void *ev_data,
     jobs[i] = vgc_job_init(sbev_trampoline, arg, FIBER_MID);
   }
   // Eventually we should handle this more gracefully
-  if(vgc_schedule_jobs(ev->fiber, jobs, cur, count)) {
+  if(vgc_schedule_jobs(fiber, jobs, cur, count)) {
     log_error("Error while scheduling jobs from emit");
     exit(-1);
   }
@@ -180,29 +182,29 @@ void sbev_kill(sbev_eventcore *ev) {
   uv_rwlock_wrunlock(&ev->lock);
 }
 
-void sbev_run_event_once(sbev_eventcore *ev) {
+void sbev_run_event_once(sbev_eventcore *ev, vgc_fiber fiber) {
   vgc_counter count;
   if(!ev->kill_flag)
-    sbev_emit_event(ev, ev->tick, NULL, &count);
+    sbev_emit_event(ev, ev->tick, NULL, fiber, &count);
   else
-    sbev_emit_event(ev, ev->kill, NULL, &count);
-  vgc_wait_for_counter(ev->fiber, &count);
+    sbev_emit_event(ev, ev->kill, NULL, fiber, &count);
+  fiber = vgc_wait_for_counter(fiber, &count);
 }
 
-void sbev_run_event_continous(sbev_eventcore *ev) {
+void sbev_run_event_continous(sbev_eventcore *ev, vgc_fiber fiber) {
   vgc_counter count;
   while(!ev->kill_flag) {
-    sbev_emit_event(ev, ev->tick, NULL, &count);
-    vgc_wait_for_counter(ev->fiber, &count);
+    sbev_emit_event(ev, ev->tick, NULL, fiber, &count);
+    fiber = vgc_wait_for_counter(fiber, &count);
   }
-  sbev_emit_event(ev, ev->kill, NULL, &count);
-  vgc_wait_for_counter(ev->fiber, &count);
+  sbev_emit_event(ev, ev->kill, NULL, fiber, &count);
+  fiber = vgc_wait_for_counter(fiber, &count);
 }
 
-void sbev_start_event(sbev_eventcore *ev, int continuous) {
+void sbev_start_event(sbev_eventcore *ev, vgc_fiber fiber, int continuous) {
   vgc_counter count;
-  sbev_emit_event(ev, ev->start, NULL, &count);
-  vgc_wait_for_counter(ev->fiber, &count);
+  sbev_emit_event(ev, ev->start, NULL, fiber, &count);
+  fiber = vgc_wait_for_counter(fiber, &count);
   if(continuous)
-    sbev_run_event_continous(ev);
+    sbev_run_event_continous(ev, fiber);
 }

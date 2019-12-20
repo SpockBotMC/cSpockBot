@@ -34,7 +34,7 @@ typedef struct {
 
 typedef struct {
   sbev_eventcore *ev;
-  vgc_fiber fiber;
+  vgc_fiber *fiber_ptr;
   sbnet_settings settings;
   uint64_t *handles[protocol_state_max][protocol_direction_max];
   int compression;

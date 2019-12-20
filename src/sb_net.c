@@ -59,10 +59,10 @@ uv_buf_t sbnet_buf_init(size_t size) {
   return uv_buf_init(tmp, size);
 }
 
-static void sbnet_ontick(vgc_fiber fiber, void *cb_data, void *event_data,
+static void sbnet_ontick(vgc_fiber *fiber, void *cb_data, void *event_data,
                          uint64_t handle) {
   sbnet_netcore *net = cb_data;
-  net->fiber = fiber;
+  net->fiber_ptr = fiber;
   uv_run(&net->loop, UV_RUN_ONCE);
 }
 
@@ -135,8 +135,8 @@ static void sbnet_read_cb(uv_stream_t *s, ssize_t nread, const uv_buf_t *buf) {
               protocol_strings[net->proto_state][toclient_id][id]);
     vgc_counter count;
     sbev_emit_event(net->ev, net->handles[net->proto_state][toclient_id][id],
-                    pak, &count);
-    vgc_wait_for_counter(net->fiber, &count);
+                    pak, *net->fiber_ptr, &count);
+    *net->fiber_ptr = vgc_wait_for_counter(*net->fiber_ptr, &count);
   }
 }
 
@@ -203,13 +203,19 @@ static void sbnet_connect_cb(uv_connect_t *connect, int status) {
   free_login_toserver_login_start(login_start);
 }
 
-void sbnet_start_cb(vgc_fiber fiber, void *cb_data, void *event_data,
+void sbnet_start_cb(vgc_fiber *fiber, void *cb_data, void *event_data,
                     uint64_t handle) {
   sbnet_netcore *net = cb_data;
   struct sockaddr_in dest;
   uv_ip4_addr(net->settings.addr, net->settings.port, &dest);
   uv_tcp_connect(&net->connect, &net->tcp, (struct sockaddr *) &dest,
                  sbnet_connect_cb);
+}
+
+void sbnet_compress_cb(vgc_fiber *fiber, void *cb_data, void *event_data,
+                       uint64_t handle) {
+  sbnet_netcore *net = cb_data;
+  net->compression = compressed;
 }
 
 static void sbnet_alloc_handles(
@@ -243,7 +249,7 @@ int sbnet_init_net(sbnet_netcore *net, sbev_eventcore *ev,
   net->proto_state = handshaking_id;
   net->next_packet_size = NO_SIZE;
   net->read_buf.len = 4096;
-  CHK_ALLOC(net->read_buf.base = calloc(1, net->read_buf.len));
+  CHK_ALLOC(net->read_buf.base = malloc(net->read_buf.len));
   net->read_buf.cur = net->read_buf.base;
   net->read_buf.in_use = 0;
   net->read_buf.rem = net->read_buf.len;
@@ -255,6 +261,7 @@ int sbnet_init_net(sbnet_netcore *net, sbev_eventcore *ev,
   sbnet_reg_handles(net->handles, ev);
   sbev_reg_event_cb(ev, "start", sbnet_start_cb, net);
   sbev_reg_event_cb(ev, "tick", sbnet_ontick, net);
+  sbev_reg_event_cb(ev, "login_toclient_compress", sbnet_compress_cb, net);
   return 0;
 }
 
