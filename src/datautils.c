@@ -227,13 +227,11 @@ int walk_varlong(char *source, size_t max_len) {
     return varnum_overrun;
   int len = 1;
   for(; *(unsigned char *)source & 0x80; source++, len++) {
-    if(len > 9)
+    if(len > 8)
       return varnum_invalid;
-    if((size_t)len > max_len)
+    if((size_t)len >= max_len)
       return varnum_overrun;
   }
-  if((size_t)len > max_len)
-    return varnum_overrun;
   return len;
 }
 
@@ -246,10 +244,12 @@ char *enc_varlong(char *dest, uint64_t source) {
 }
 
 char *dec_varlong(int64_t *dest, char *source) {
-  for(; *(unsigned char *)source & 0x80; source++, *(uint64_t *)dest <<= 7) {
-    *(uint64_t *)dest |= *source & 0x7F;
+  *dest = 0;
+  int i = 0;
+  for(; *(unsigned char *)source & 0x80; source++, i+=7) {
+    *(uint64_t *)dest |= (*source & 0x7F) << i;
   }
-  *(uint64_t *)dest |= *source & 0x7F;
+  *(uint64_t *)dest |= (*source & 0x7F) << i;
   return ++source;
 }
 

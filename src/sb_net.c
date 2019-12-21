@@ -1,6 +1,9 @@
 #include <stdint.h>
+#include <stdlib.h>
 #include <uv.h>
+#include <zlib.h>
 #include "1_14_4_proto.h"
+#include "datautils.h"
 #include "sds.h"
 #include "sb_event.h"
 #include "sb_net.h"
@@ -8,6 +11,8 @@
 #include "assert.h"
 
 #define ERR_RET(ret, x) do { if((ret = x) < 0) return ret;} while(0)
+
+#define ERR_CHK(x, str) do { if(x < 0) { log_error(str); exit(-1); }} while(0)
 
 #define CHK_ALLOC(x) do {                                                     \
   if(!(x)) {                                                                  \
@@ -23,7 +28,7 @@ enum compression_state {
   compressed
 };
 
-int sbnet_recv_bbuf(char *dest, sbnet_bbuf *src, size_t len) {
+static int sbnet_recv_bbuf(char *dest, sbnet_bbuf *src, size_t len) {
   if(src->in_use < len)
     return -1;
   memcpy(dest, src->cur, len);
@@ -32,7 +37,7 @@ int sbnet_recv_bbuf(char *dest, sbnet_bbuf *src, size_t len) {
   return 0;
 }
 
-int sbnet_adv_bbuf(sbnet_bbuf *buf, size_t dist) {
+static int sbnet_adv_bbuf(sbnet_bbuf *buf, size_t dist) {
   if(buf->in_use < dist)
     return -1;
   buf->cur += dist;
@@ -40,7 +45,7 @@ int sbnet_adv_bbuf(sbnet_bbuf *buf, size_t dist) {
   return 0;
 }
 
-void sbnet_bbuf_make_room(sbnet_bbuf *buf, size_t len) {
+static void sbnet_bbuf_make_room(sbnet_bbuf *buf, size_t len) {
   if (len <= buf->rem)
     return;
   buf->cur = memmove(buf->base, buf->cur, buf->in_use);
@@ -53,7 +58,7 @@ void sbnet_bbuf_make_room(sbnet_bbuf *buf, size_t len) {
   buf->cur = buf->base;
 }
 
-uv_buf_t sbnet_buf_init(size_t size) {
+static uv_buf_t sbnet_buf_init(size_t size) {
   char *tmp = malloc(size);
   CHK_ALLOC(tmp);
   return uv_buf_init(tmp, size);
@@ -104,32 +109,79 @@ static void sbnet_read_cb(uv_stream_t *s, ssize_t nread, const uv_buf_t *buf) {
     if(net->next_packet_size > net->read_buf.in_use)
       break;
 
-    // ToDo: Fire this off in a seperate fiber, so we can decode a new packet
-    // while still resolving the old one
-    char *data;
+    // The bound buffer isn't thread safe so we can't do these steps in a new
+    // fiber.
+    char *data, *pdata;
     size_t data_len;
     int32_t id;
     if(net->compression == uncompressed) {
       ret = walk_varint(net->read_buf.cur, net->read_buf.in_use);
-      if(ret < 0) {
-        log_error("Error decoding packet id");
-        exit(-1);
-      }
+      ERR_CHK(ret, "Error decoding packet id");
       dec_varint(&id, net->read_buf.cur);
       sbnet_adv_bbuf(&net->read_buf, ret);
       data_len = net->next_packet_size - ret;
       CHK_ALLOC(data = malloc(data_len));
       sbnet_recv_bbuf(data, &net->read_buf, data_len);
+      pdata = data;
     } else {
-      log_debug("Compression unimplemented");
-      exit(-1);
+      ret = walk_varint(net->read_buf.cur, net->read_buf.in_use);
+      ERR_CHK(ret, "Error decoding uncompressed data len");
+      int32_t tmp;
+      dec_varint(&tmp, net->read_buf.cur);
+      sbnet_adv_bbuf(&net->read_buf, ret);
+      if(tmp) {
+        data_len = tmp;
+        size_t compressed_size = net->next_packet_size - ret;
+        CHK_ALLOC(data = malloc(data_len));
+        z_stream z = {
+          .zalloc = Z_NULL,
+          .zfree = Z_NULL,
+          .opaque = Z_NULL,
+          .avail_in = compressed_size,
+          .next_in = net->read_buf.cur,
+          .avail_out = data_len,
+          .next_out = data
+        };
+        // Minecraft does something funky with its compression, its not just
+        // raw defalte. Passing 32 to zlib in the "windowBits" field tells zlib
+        // to just figure it out for us.
+        if(inflateInit(&z) != Z_OK) {
+          log_error("Error initializing deflate");
+          exit(-1);
+        }
+        ret = inflate(&z, Z_FINISH);
+        if(ret != Z_STREAM_END) {
+          log_error("Error deflating stream");
+          exit(-1);
+        }
+        inflateEnd(&z);
+        sbnet_adv_bbuf(&net->read_buf, compressed_size);
+
+        ret = walk_varint(data, data_len);
+        ERR_CHK(ret, "Error decoding packet id");
+        pdata = dec_varint(&id, data);
+        data_len -= ret;
+      } else {
+        data_len = net->next_packet_size - ret;
+        ret = walk_varint(net->read_buf.cur, net->read_buf.in_use);
+        ERR_CHK(ret, "Error decoding packet id");
+        dec_varint(&id, net->read_buf.cur);
+        sbnet_adv_bbuf(&net->read_buf, ret);
+        data_len -= ret;
+        CHK_ALLOC(data = malloc(data_len));
+        sbnet_recv_bbuf(data, &net->read_buf, data_len);
+        pdata = data;
+      }
     }
-    void *pak = generic_toclient_decode(net->proto_state, id, data, data_len);
+    net->next_packet_size = NO_SIZE;
+
+    void *pak = generic_toclient_decode(net->proto_state, id, pdata, data_len);
     if(!pak) {
       log_error("Error decoding packet: %s",
                  protocol_strings[net->proto_state][toclient_id][id]);
       exit(-1);
     }
+    free(data);
 
     log_debug("Decoded: %s",
               protocol_strings[net->proto_state][toclient_id][id]);
@@ -215,7 +267,15 @@ void sbnet_start_cb(vgc_fiber *fiber, void *cb_data, void *event_data,
 void sbnet_compress_cb(vgc_fiber *fiber, void *cb_data, void *event_data,
                        uint64_t handle) {
   sbnet_netcore *net = cb_data;
+  login_toclient_compress *packet = event_data;
+  net->threshold = packet->threshold;
   net->compression = compressed;
+}
+
+void sbnet_success_cb(vgc_fiber *fiber, void *cb_data, void *event_data,
+                      uint64_t handle) {
+  sbnet_netcore *net = cb_data;
+  net->proto_state = play_id;
 }
 
 static void sbnet_alloc_handles(
@@ -262,6 +322,7 @@ int sbnet_init_net(sbnet_netcore *net, sbev_eventcore *ev,
   sbev_reg_event_cb(ev, "start", sbnet_start_cb, net);
   sbev_reg_event_cb(ev, "tick", sbnet_ontick, net);
   sbev_reg_event_cb(ev, "login_toclient_compress", sbnet_compress_cb, net);
+  sbev_reg_event_cb(ev, "login_toclient_success", sbnet_success_cb, net);
   return 0;
 }
 

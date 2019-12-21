@@ -38,6 +38,7 @@ typedef struct {
   sbnet_settings settings;
   uint64_t *handles[protocol_state_max][protocol_direction_max];
   int compression;
+  int32_t threshold;
   int proto_state;
   sbnet_bbuf read_buf;
   ssize_t next_packet_size;

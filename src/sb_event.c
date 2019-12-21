@@ -149,10 +149,16 @@ void sbev_emit_event(sbev_eventcore *ev, uint64_t handle, void *ev_data,
   uv_rwlock_rdlock(&ent->lock);
   uint64_t cur = ent->cur;
   sbev_cb_and_data *cbs;
-  if(cur) {
-    CHK_ALLOC(cbs = malloc(sizeof(*cbs) * cur));
-    memcpy(cbs, ent->cbs, sizeof(*cbs) * cur);
+
+  // Early exit if there are no callbacks registered for this event
+  if(!cur) {
+    uv_rwlock_rdunlock(&ev->entries[handle].lock);
+    uv_rwlock_rdunlock(&ev->lock);
+    return;
   }
+
+  CHK_ALLOC(cbs = malloc(sizeof(*cbs) * cur));
+  memcpy(cbs, ent->cbs, sizeof(*cbs) * cur);
   uv_rwlock_rdunlock(&ev->entries[handle].lock);
   uv_rwlock_rdunlock(&ev->lock);
   vgc_job *jobs = malloc(sizeof(*jobs) * cur);

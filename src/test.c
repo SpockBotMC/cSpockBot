@@ -15,7 +15,7 @@ sds ByteToHex(void *ptr, size_t len) {
 
 int main(int argc, char *argv[]) {
     char *buf = calloc(1, 1024);
-	enc_varint(buf, 0x8F);
+	enc_varint(buf, 256);
 	size_t size = walk_varint(buf, 1024);
 	log_debug("Walk len: %zu", size);
 	sds str = ByteToHex(buf, size);
