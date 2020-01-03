@@ -16,7 +16,7 @@
 #define ERR_CHK(x, str) do { if(x < 0) { log_error(str); exit(-1);}} while(0)
 
 void sbev_init_event(sbev_eventcore *ev) {
-  ERR_CHK(uv_rwlock_init(&ev->lock), "Failed to init rwlock");
+  ERR_CHK(csb_init_plugin((csb_base *) ev), "Failed to init ev base plugin");
   ev->entries_map = NULL;
   ev->max = 20; // Chosen by fair dice roll
   ev->cur = 0;
@@ -43,33 +43,33 @@ void sbev_init_event_entry(sbev_event_entry *ent, char const *nomen, uint64_t ha
 
 uint64_t sbev_reg_event(sbev_eventcore *ev, char const *nomen) {
   sbev_event_entry *find;
-  uv_rwlock_rdlock(&ev->lock);
+  csb_rdlock_plugin((csb_base *) ev);
   HASH_FIND_STR(ev->entries_map, nomen, find);
-  uv_rwlock_rdunlock(&ev->lock);
+  csb_rdunlock_plugin((csb_base *) ev);
   if(find)
     return find->handle;
 
-  uv_rwlock_wrlock(&ev->lock);
+  csb_wrlock_plugin((csb_base *) ev);
   if(ev->cur == ev->max) {
     ev->max *= 2;
     HASH_CLEAR(hh, ev->entries_map);
     CHK_ALLOC(ev->entries
               = realloc(ev->entries, sizeof(*ev->entries) * ev->max));
     for(uint64_t i = 0; i < ev->cur; i++)
-        HASH_ADD_KEYPTR(hh, ev->entries_map, ev->entries[i].nomen,
-                        sdslen(ev->entries[i].nomen), &ev->entries[i]);
+      HASH_ADD_KEYPTR(hh, ev->entries_map, ev->entries[i].nomen,
+                      sdslen(ev->entries[i].nomen), &ev->entries[i]);
   }
   uint64_t handle = ev->cur++;
   sbev_event_entry *ent = &ev->entries[handle];
   sbev_init_event_entry(ent, nomen, handle);
   HASH_ADD_KEYPTR(hh, ev->entries_map, ent->nomen, sdslen(ent->nomen), ent);
-  uv_rwlock_wrunlock(&ev->lock);
+  csb_wrunlock_plugin((csb_base *) ev);
   return handle;
 }
 
 uint64_t sbev_reg_cb(sbev_eventcore *ev, uint64_t ev_handle, sbev_event_cb cb,
                      void *cb_data) {
-  uv_rwlock_rdlock(&ev->lock);
+  csb_rdlock_plugin((csb_base *) ev);
   sbev_event_entry *ent = &ev->entries[ev_handle];
   uv_rwlock_wrlock(&ent->lock);
   uint64_t ent_handle;
@@ -89,13 +89,13 @@ uint64_t sbev_reg_cb(sbev_eventcore *ev, uint64_t ev_handle, sbev_event_cb cb,
   ent->cbs[ent_handle].cb = cb;
   ent->cbs[ent_handle].cb_data = cb_data;
   uv_rwlock_wrunlock(&ent->lock);
-  uv_rwlock_rdunlock(&ev->lock);
+  csb_rdunlock_plugin((csb_base *) ev);
   return ent_handle;
 }
 
 void sbev_unreg_cb(sbev_eventcore *ev, uint64_t ev_handle,
                    uint64_t ent_handle) {
-  uv_rwlock_rdlock(&ev->lock);
+  csb_rdlock_plugin((csb_base *) ev);
   sbev_event_entry *ent = &ev->entries[ev_handle];
   uv_rwlock_wrlock(&ent->lock);
   if(ent->free_cur == ent->free_max) {
@@ -109,7 +109,7 @@ void sbev_unreg_cb(sbev_eventcore *ev, uint64_t ev_handle,
   ent->free_handles[ent->free_cur] = ent_handle;
   ent->free_cur++;
   uv_rwlock_wrunlock(&ent->lock);
-  uv_rwlock_rdunlock(&ev->lock);
+  csb_rdunlock_plugin((csb_base *) ev);
 }
 
 void sbev_reg_event_cb(sbev_eventcore *ev, char const *nomen, sbev_event_cb cb,
@@ -129,9 +129,9 @@ typedef struct {
 } sbev_tramp_arg;
 
 void sbev_trampoline(vgc_fiber fiber) {
-  sbev_tramp_arg * tmp = fiber.data;
-  tmp->cbs.cb(&fiber, tmp->cbs.cb_data, tmp->ev_data, tmp->handle);
-  free(tmp);
+  sbev_tramp_arg *arg = fiber.data;
+  arg->cbs.cb(&fiber, arg->cbs.cb_data, arg->ev_data, arg->handle);
+  free(arg);
   vgc_fiber_finish(fiber);
 }
 
@@ -144,23 +144,23 @@ void sbev_trampoline(vgc_fiber fiber) {
 // which we could store in the eventcore. Reconsider this
 void sbev_emit_event(sbev_eventcore *ev, uint64_t handle, void *ev_data,
                      vgc_fiber fiber, vgc_counter *count) {
-  uv_rwlock_rdlock(&ev->lock);
+  csb_rdlock_plugin((csb_base *) ev);
   sbev_event_entry *ent = &ev->entries[handle];
   uv_rwlock_rdlock(&ent->lock);
   uint64_t cur = ent->cur;
-  sbev_cb_and_data *cbs;
 
   // Early exit if there are no callbacks registered for this event
   if(!cur) {
     uv_rwlock_rdunlock(&ev->entries[handle].lock);
-    uv_rwlock_rdunlock(&ev->lock);
+    csb_rdunlock_plugin((csb_base *) ev);
     return;
   }
 
+  sbev_cb_and_data *cbs;
   CHK_ALLOC(cbs = malloc(sizeof(*cbs) * cur));
   memcpy(cbs, ent->cbs, sizeof(*cbs) * cur);
   uv_rwlock_rdunlock(&ev->entries[handle].lock);
-  uv_rwlock_rdunlock(&ev->lock);
+  csb_rdunlock_plugin((csb_base *) ev);
   vgc_job *jobs = malloc(sizeof(*jobs) * cur);
   CHK_ALLOC(jobs);
   for(uint64_t i = 0; i < cur; i++) {
@@ -183,26 +183,34 @@ void sbev_emit_event(sbev_eventcore *ev, uint64_t handle, void *ev_data,
 
 void sbev_kill(sbev_eventcore *ev) {
   log_debug("Kill called");
-  uv_rwlock_wrlock(&ev->lock);
+  csb_wrlock_plugin((csb_base *) ev);
   ev->kill_flag = 1;
-  uv_rwlock_wrunlock(&ev->lock);
+  csb_wrunlock_plugin((csb_base *) ev);
 }
 
 void sbev_run_event_once(sbev_eventcore *ev, vgc_fiber fiber) {
   vgc_counter count;
-  if(!ev->kill_flag)
+  csb_rdlock_plugin((csb_base *) ev);
+  if(!ev->kill_flag) {
+    csb_rdunlock_plugin((csb_base *) ev);
     sbev_emit_event(ev, ev->tick, NULL, fiber, &count);
-  else
+  } else {
+    csb_rdunlock_plugin((csb_base *) ev);
     sbev_emit_event(ev, ev->kill, NULL, fiber, &count);
+  }
   fiber = vgc_wait_for_counter(fiber, &count);
 }
 
 void sbev_run_event_continous(sbev_eventcore *ev, vgc_fiber fiber) {
   vgc_counter count;
+  csb_rdlock_plugin((csb_base *) ev);
   while(!ev->kill_flag) {
+    csb_rdunlock_plugin((csb_base *) ev);
     sbev_emit_event(ev, ev->tick, NULL, fiber, &count);
     fiber = vgc_wait_for_counter(fiber, &count);
+    csb_rdlock_plugin((csb_base *) ev);
   }
+  csb_rdunlock_plugin((csb_base *) ev);
   sbev_emit_event(ev, ev->kill, NULL, fiber, &count);
   fiber = vgc_wait_for_counter(fiber, &count);
 }

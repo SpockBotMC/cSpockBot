@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <uv.h>
 #include <zlib.h>
-#include "1_14_4_proto.h"
+#include MC_PROTO_INCLUDE
+#include "base.h"
 #include "datautils.h"
 #include "sds.h"
 #include "sb_event.h"
@@ -58,7 +59,7 @@ static void sbnet_bbuf_make_room(sbnet_bbuf *buf, size_t len) {
   buf->cur = buf->base;
 }
 
-static uv_buf_t sbnet_buf_init(size_t size) {
+static uv_buf_t sbnet_init_buf(size_t size) {
   char *tmp = malloc(size);
   CHK_ALLOC(tmp);
   return uv_buf_init(tmp, size);
@@ -87,6 +88,7 @@ static void sbnet_read_cb(uv_stream_t *s, ssize_t nread, const uv_buf_t *buf) {
     sbev_kill(net->ev);
     return;
   }
+  csb_wrlock_plugin((csb_base *) net);
 
   net->read_buf.in_use += nread;
   net->read_buf.rem -= nread;
@@ -109,8 +111,8 @@ static void sbnet_read_cb(uv_stream_t *s, ssize_t nread, const uv_buf_t *buf) {
     if(net->next_packet_size > net->read_buf.in_use)
       break;
 
-    // The bound buffer isn't thread safe so we can't do these steps in a new
-    // fiber.
+    // We could read [packet size] bytes into a bbuf and do this in a seperate
+    // fiber, but I don't think that this is a performance bottleneck
     char *data, *pdata;
     size_t data_len;
     int32_t id;
@@ -142,16 +144,17 @@ static void sbnet_read_cb(uv_stream_t *s, ssize_t nread, const uv_buf_t *buf) {
           .avail_out = data_len,
           .next_out = data
         };
+
         // Minecraft does something funky with its compression, its not just
         // raw defalte. Passing 32 to zlib in the "windowBits" field tells zlib
         // to just figure it out for us.
         if(inflateInit(&z) != Z_OK) {
-          log_error("Error initializing deflate");
+          log_error("Error initializing inflate");
           exit(-1);
         }
         ret = inflate(&z, Z_FINISH);
         if(ret != Z_STREAM_END) {
-          log_error("Error deflating stream");
+          log_error("Error inflating stream");
           exit(-1);
         }
         inflateEnd(&z);
@@ -185,9 +188,18 @@ static void sbnet_read_cb(uv_stream_t *s, ssize_t nread, const uv_buf_t *buf) {
 
     log_debug("Decoded: %s",
               protocol_strings[net->proto_state][toclient_id][id]);
+
+    csb_wrunlock_plugin((csb_base *) net);
+
     vgc_counter count;
     sbev_emit_event(net->ev, net->handles[net->proto_state][toclient_id][id],
                     pak, *net->fiber_ptr, &count);
+
+    // ToDo: We wait for events to resolve before moving on to the next packet
+    // because handshaking causes state changes during that packet resolution.
+    // It would be faster if we had a special-case read_cb function for
+    // handshaking, and in the general case didn't wait for events to resolve
+    // before decoding the next packet.
     *net->fiber_ptr = vgc_wait_for_counter(*net->fiber_ptr, &count);
   }
 }
@@ -231,15 +243,21 @@ static void sbnet_connect_cb(uv_connect_t *connect, int status) {
   };
 
   size_t s_set_proto = size_handshaking_toserver_set_protocol(set_proto);
-  size_t s_set_proto_hdr = sbnet_size_uncom_hdr(s_set_proto, handshaking_toserver_set_protocol_id);
+  size_t s_set_proto_hdr = sbnet_size_uncom_hdr(
+    s_set_proto, handshaking_toserver_set_protocol_id
+  );
 
   size_t s_login_start = size_login_toserver_login_start(login_start);
-  size_t s_login_start_hdr = sbnet_size_uncom_hdr(s_login_start, login_toserver_login_start_id);
+  size_t s_login_start_hdr = sbnet_size_uncom_hdr(
+    s_login_start, login_toserver_login_start_id
+  );
 
-  size_t tot_size = s_set_proto_hdr + s_set_proto + s_login_start_hdr + s_login_start;
-  uv_buf_t buf = sbnet_buf_init(tot_size);
+  size_t tot_size = s_set_proto_hdr + s_set_proto + s_login_start_hdr +
+                    s_login_start;
+  uv_buf_t buf = sbnet_init_buf(tot_size);
 
-  char *tmp = sbnet_enc_uncom_hdr(buf.base, s_set_proto, handshaking_toserver_set_protocol_id);
+  char *tmp = sbnet_enc_uncom_hdr(buf.base, s_set_proto,
+                                  handshaking_toserver_set_protocol_id);
   tmp = enc_handshaking_toserver_set_protocol(tmp, set_proto);
   tmp = sbnet_enc_uncom_hdr(tmp, s_login_start, login_toserver_login_start_id);
   enc_login_toserver_login_start(tmp, login_start);
@@ -303,6 +321,8 @@ static void sbnet_reg_handles(
 
 int sbnet_init_net(sbnet_netcore *net, sbev_eventcore *ev,
                    sbnet_settings settings) {
+  int ret;
+  ERR_RET(ret, csb_init_plugin((csb_base *) net));
   net->ev = ev;
   net->settings = settings;
   net->compression = uncompressed;
@@ -313,7 +333,6 @@ int sbnet_init_net(sbnet_netcore *net, sbev_eventcore *ev,
   net->read_buf.cur = net->read_buf.base;
   net->read_buf.in_use = 0;
   net->read_buf.rem = net->read_buf.len;
-  int ret;
   ERR_RET(ret, uv_loop_init(&net->loop));
   ERR_RET(ret, uv_tcp_init(&net->loop, &net->tcp));
   net->connect.data = net;

@@ -5,8 +5,9 @@
 #include <uv.h>
 
 #include "fibers/vgc.h"
+#include "base.h"
 #include "sb_event.h"
-#include "1_14_4_proto.h"
+#include MC_PROTO_INCLUDE
 #include "sds.h"
 
 
@@ -33,7 +34,12 @@ typedef struct {
 } sbnet_settings;
 
 typedef struct {
+  CSB_PLUGIN_BASE
   sbev_eventcore *ev;
+  // Keeping a copy of the fiber around is a %BAD% idea generally, and you
+  // shouldn't do it. Net needs to do this because it has to interface with
+  // libuv's asynchronous event loop and doesn't have anywhere to stash the
+  // fiber across callbacks.
   vgc_fiber *fiber_ptr;
   sbnet_settings settings;
   uint64_t *handles[protocol_state_max][protocol_direction_max];

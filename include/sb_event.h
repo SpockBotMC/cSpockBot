@@ -6,6 +6,7 @@
 #include "sds.h"
 #include "uthash.h"
 #include "fibers/vgc.h"
+#include "base.h"
 
 typedef void (*sbev_event_cb)(vgc_fiber *fiber, void *cb_data, void *ev_data,
                               uint64_t handle);
@@ -31,8 +32,8 @@ typedef struct {
 } sbev_event_entry;
 
 typedef struct {
+  CSB_PLUGIN_BASE
   vgc_fiber fiber;
-  uv_rwlock_t lock;
   // Event hashmap and lookup array
   sbev_event_entry *entries_map;
   sbev_event_entry *entries;
