@@ -1,7 +1,3 @@
-// This code is not so much "adapted" from Dmitry Vyukov's Bounded MPMC queue
-// as it is "stolen outright"
-// http://www.1024cores.net/home/lock-free-algorithms/queues/bounded-mpmc-queue
-
 #include "fibers/vgc.h"
 #include <stdint.h>
 
