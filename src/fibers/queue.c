@@ -1,3 +1,6 @@
+// Originally based on Dimitry Vyukov's implementation
+// http://www.1024cores.net/home/lock-free-algorithms/queues/bounded-mpmc-queue
+
 #include "fibers/vgc.h"
 #include <stdint.h>
 
